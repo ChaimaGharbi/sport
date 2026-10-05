@@ -5,6 +5,8 @@ My 31-day training plan (6 Oct to 4 Nov 2026), with ticks synced across devices.
 ## What's inside
 
 - `index.html`: the whole plan, pictures included. Ticks are kept in the browser and synced to the API.
+- `manifest.webmanifest`, `sw.js`, `icons/`: make it installable and usable offline.
+- `vercel.json`: makes sure the service worker always updates.
 - `api/state.js`: a Vercel serverless function that saves and loads ticks from Upstash Redis.
 - Both read and write need a passphrase, so nobody else can see or change your ticks.
 
@@ -26,6 +28,16 @@ curl -H "x-passphrase: YOUR_PASSPHRASE" https://YOUR-PROJECT.vercel.app/api/stat
 ```
 
 You should get `{"done":{...},"updatedAt":"..."}`. A wrong passphrase returns 401.
+
+## Install it as an app
+
+- Android (Chrome or Samsung Internet): open the site, menu → **Install app** (or Add to Home screen).
+- iPhone (Safari): Share → **Add to Home Screen**.
+- Laptop (Chrome or Edge): the install icon at the right of the address bar.
+
+The app opens full screen, works offline, and syncs your ticks once you're back online.
+After you push a new `index.html`, close and reopen the app once to get the update.
+If you change `sw.js`, bump `CACHE` (for example `reboot15-v2`).
 
 ## How sync behaves
 
