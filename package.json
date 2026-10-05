@@ -1,0 +1,6 @@
+{
+  "name": "reboot15",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=18" }
+}
