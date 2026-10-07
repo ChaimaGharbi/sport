@@ -1,5 +1,5 @@
-// Reboot 15 service worker: the app opens offline, updates arrive when online.
-const CACHE = "reboot15-v1";
+// Ascent service worker: the app opens offline, updates arrive when online.
+const CACHE = "ascent-v3";
 const SHELL = ["/", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (e) => {

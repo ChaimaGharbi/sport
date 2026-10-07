@@ -1,7 +1,7 @@
 {
-  "name": "Reboot 15",
-  "short_name": "Reboot 15",
-  "description": "My training plan to 4 November, with synced ticks.",
+  "name": "Ascent",
+  "short_name": "Ascent",
+  "description": "Training, steps, food and daily progress.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

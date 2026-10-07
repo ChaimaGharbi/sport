@@ -1,4 +1,4 @@
-# Reboot 15
+# Ascent
 
 My 31-day training plan (6 Oct to 4 Nov 2026), with ticks synced across devices.
 
@@ -12,7 +12,7 @@ My 31-day training plan (6 Oct to 4 Nov 2026), with ticks synced across devices.
 
 ## Deploy (about 10 minutes)
 
-1. Push this folder to a new GitHub repo, for example `reboot15`.
+1. Push this folder to a new GitHub repo, for example `ascent`.
 2. On vercel.com: Add New → Project → import the repo. No build settings needed. Deploy.
 3. In the project: Storage → Create Database → Upstash for Redis (free plan) → connect it to this project.
    This adds `KV_REST_API_URL` and `KV_REST_API_TOKEN` automatically.
@@ -29,6 +29,12 @@ curl -H "x-passphrase: YOUR_PASSPHRASE" https://YOUR-PROJECT.vercel.app/api/stat
 
 You should get `{"done":{...},"updatedAt":"..."}`. A wrong passphrase returns 401.
 
+## My day
+
+Each day has a **My day** box: steps (with a bar to 10,000), a free note of what you actually did,
+and **Count this day as complete**. A day turns green when the full plan is ticked or when you
+count it as complete yourself. Steps show on the day strip.
+
 ## Install it as an app
 
 - Android (Chrome or Samsung Internet): open the site, menu → **Install app** (or Add to Home screen).
@@ -37,7 +43,7 @@ You should get `{"done":{...},"updatedAt":"..."}`. A wrong passphrase returns 40
 
 The app opens full screen, works offline, and syncs your ticks once you're back online.
 After you push a new `index.html`, close and reopen the app once to get the update.
-If you change `sw.js`, bump `CACHE` (for example `reboot15-v2`).
+If you change `sw.js`, bump `CACHE` (for example `ascent-v4`).
 
 ## How sync behaves
 

@@ -9,9 +9,9 @@
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Reboot 15">
+<meta name="apple-mobile-web-app-title" content="Ascent">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Reboot 15</title>
+<title>Ascent</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
 <style id="css">
@@ -85,6 +85,27 @@ h3{font-size:1.25rem;text-transform:uppercase;letter-spacing:.06em;color:var(--m
 .sync label{color:var(--muted)}
 .sync input{font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-width:0;flex:1 1 160px}
 .sync button{font:inherit;padding:6px 14px;border-radius:8px;border:1px solid var(--done);background:var(--done);color:#fff;cursor:pointer}
+.mylog{background:var(--bg);border-radius:12px;padding:12px;gap:10px}
+.steps{display:grid;grid-template-columns:auto 110px 1fr auto;gap:10px;align-items:center}
+.steps label,.lbl{font-size:.9rem;color:var(--muted)}
+.mylog input[type=number],.mylog textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;min-width:0;width:100%;box-sizing:border-box}
+.mylog textarea{resize:vertical}
+.sbar{height:8px;border-radius:4px;background:var(--line);overflow:hidden;min-width:40px}
+.sbar i{display:block;height:100%;background:var(--climb)}
+.sgoal{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.done-own{display:flex;gap:10px;align-items:center;font-weight:700;cursor:pointer}
+.done-own input{width:24px;height:24px;accent-color:var(--done)}
+.chip .st{font-size:.68rem;color:var(--climb);font-variant-numeric:tabular-nums}
+.chip .st.hit{color:var(--done);font-weight:700}
+@media (max-width:420px){.steps{grid-template-columns:auto 1fr}.sbar{grid-column:1/-1}.sgoal{grid-column:1/-1}}
+.sline{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:center;font-size:.85rem;color:var(--muted)}
+.sline b{color:var(--ink);font-variant-numeric:tabular-nums}
+.goalset{display:flex;gap:6px;align-items:center}
+.goalset input{width:90px!important}
+.food{display:grid;gap:6px}
+.food h4{margin:4px 0 0;font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font-size:1rem;color:var(--muted)}
+.meal{display:grid;grid-template-columns:84px 1fr;gap:8px;align-items:center;font-size:.9rem;color:var(--muted)}
+.mylog input[type=text]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;min-width:0;width:100%;box-sizing:border-box}
 .lb[hidden]{display:none}
 .lb figure{margin:0;display:grid;gap:8px;max-width:min(720px,100%)}
 .lb img{width:100%;border-radius:10px;background:#fff}
@@ -122,8 +143,15 @@ th{font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font
 (function(){
 const STATE = JSON.parse(document.getElementById('state').textContent || '{"done":{}}');
 STATE.done = STATE.done || {};
-try{const saved=JSON.parse(localStorage.getItem('reboot15-done')||'null');if(saved&&typeof saved==='object')STATE.done=saved;}catch(e){}
-const saveLocal=()=>{try{localStorage.setItem('reboot15-done',JSON.stringify(STATE.done))}catch(e){}};
+STATE.log=STATE.log||{};STATE.settings=STATE.settings||{};
+try{const saved=JSON.parse(localStorage.getItem('reboot15-done')||'null');if(saved&&typeof saved==='object')STATE.done=saved;const lg=JSON.parse(localStorage.getItem('reboot15-log')||'null');if(lg&&typeof lg==='object')STATE.log=lg;const st=JSON.parse(localStorage.getItem('reboot15-settings')||'null');if(st&&typeof st==='object')STATE.settings=st;}catch(e){}
+const saveLocal=()=>{try{localStorage.setItem('reboot15-done',JSON.stringify(STATE.done));localStorage.setItem('reboot15-log',JSON.stringify(STATE.log));localStorage.setItem('reboot15-settings',JSON.stringify(STATE.settings))}catch(e){}};
+const LOG=n=>STATE.log[n]||(STATE.log[n]={});
+const GOAL=()=>STATE.settings.stepGoal||8000;
+const goalTxt=v=>v>=GOAL()?'Goal reached':kfmt(Math.max(0,GOAL()-v))+' to your '+kfmt(GOAL())+' goal';
+function avg7(n){const xs=[];for(let i=n;i>n-7&&i>=2;i--){const s=STATE.log[i]&&STATE.log[i].steps;if(s)xs.push(s);}return xs.length?{v:Math.round(xs.reduce((a,b)=>a+b,0)/xs.length),n:xs.length}:null;}
+const avgTxt=n=>{const a=avg7(n);return a?`7-day average: <b>${kfmt(a.v)}</b> over ${a.n} logged day${a.n>1?'s':''}`:'7-day average appears once you log steps'};
+const MEALS=[['b','Breakfast'],['l','Lunch'],['s','Snacks'],['d','Dinner']];
 const SYNC={pass:null,status:'',timer:null,busy:false};
 try{SYNC.pass=localStorage.getItem('reboot15-pass')}catch(e){}
 function setStatus(t){SYNC.status=t;const el=document.getElementById('save');if(el)el.textContent=t;}
@@ -135,14 +163,14 @@ async function api(method,body){
 }
 async function pull(){
   if(!SYNC.pass||SYNC.busy||SYNC.timer)return;
-  try{setStatus('Syncing');const j=await api('GET');STATE.done=j.done||{};saveLocal();render();setStatus('Synced');}
+  try{setStatus('Syncing');const j=await api('GET');STATE.done=j.done||{};STATE.log=j.log||{};STATE.settings=j.settings||STATE.settings||{};saveLocal();if(!document.activeElement||!document.activeElement.closest('.mylog'))render();setStatus('Synced');}
   catch(e){if(e.status===401){SYNC.pass=null;try{localStorage.removeItem('reboot15-pass')}catch(_){}render();setStatus('Wrong passphrase, enter it again');}else setStatus('Offline: ticks kept on this device, will sync later');}
 }
 function push(){
   if(!SYNC.pass)return;
   setStatus('Saving');clearTimeout(SYNC.timer);
   SYNC.timer=setTimeout(async()=>{SYNC.timer=null;SYNC.busy=true;
-    try{await api('PUT',{done:STATE.done});setStatus('Synced');}
+    try{await api('PUT',{done:STATE.done,log:STATE.log,settings:STATE.settings});setStatus('Synced');}
     catch(e){setStatus(e.status===401?'Wrong passphrase, enter it again':'Could not sync, will retry when you reopen the page');}
     SYNC.busy=false;},1200);
 }
@@ -287,7 +315,9 @@ function dayItems(d){
   return ids;
 }
 function coreItems(d){return dayItems(d).filter(id=>d.pm&&d.pm.core||!id.includes('-p'))}
-function dayDone(d){return coreItems(d).every(id=>STATE.done[id])}
+function planDone(d){return coreItems(d).every(id=>STATE.done[id])}
+function dayDone(d){return planDone(d)||!!(STATE.log[d.n]&&STATE.log[d.n].complete)}
+const kfmt=n=>n>=1000?(Math.round(n/100)/10).toString().replace(/\.0$/,'')+'k':String(n);
 function allIds(){return DAYS.flatMap(coreItems)}
 
 let sel = Number(ls(true)) || (DAYS.find(d=>!dayDone(d))||DAYS[0]).n;
@@ -308,16 +338,25 @@ function render(){
   const html=`<div class="wrap">
   <header style="display:grid;gap:10px">
     <div class="eyebrow">California Gym JDM · 6 Oct to 4 Nov 2026</div>
-    <h1>Reboot 15</h1>
-    <p class="lede">Back to structured training, built to reshape: lower body twice a week, upper body for posture only, fat loss for the waist. Day 1 is done. Phase 1 is days 1 to 15, phase 2 runs to 4 November, the day before Paris. Gym at 9:00 with more stair climber each week, the Chloe Ting 2024 Weight Loss Challenge at home every afternoon, its rest days on Sunday and Monday.</p>
+    <h1>Ascent</h1>
+    <p class="lede">Your daily climb. Training built to reshape: lower body twice a week, upper body for posture only, fat loss for the waist. Day 1 is done. Phase 1 is days 1 to 15, phase 2 runs to 4 November, the day before Paris. Gym at 9:00 with more stair climber each week, the Chloe Ting 2024 Weight Loss Challenge at home every afternoon, its rest days on Sunday and Monday.</p>
     <div class="meter"><div class="bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><b>${daysDone + 1}/${DAYS.length + 1} days</b>${(()=>{const t=new Date(2026,10,7)-new Date(new Date().toDateString());const n=Math.round(t/864e5);return n>0?`<span class="tag time">Wedding in ${n} days</span>`:""})()}<span class="save" id="save">${esc(SYNC.status)}</span></div>
     ${SYNC.pass?'':`<form class="sync" id="syncform"><label for="syncpass">Sync passphrase</label><input id="syncpass" type="password" autocomplete="current-password" placeholder="Same on every device"><button type="submit">Connect</button></form>`}
   </header>
-  <nav class="strip" aria-label="Days">${DAYS.map(x=>(x.n===16?'<span class="sep">Phase 2</span>':x.n===2?'<span class="sep">Phase 1</span>':'')+`<button class="chip${dayDone(x)?' full':''}" data-day="${x.n}" aria-pressed="${x.n===sel}"><span class="k">${esc(x.kind)}</span><span class="n">${x.n}</span><span class="d">${esc(x.date.replace(/ Oct$/,''))}</span></button>`).join('')}</nav>
+  ${stripHTML()}
   <section class="card" aria-live="polite">
     <div class="dayhead"><div><div class="eyebrow">${d.n>15?'Phase 2':'Phase 1'} · Day ${d.n} · ${esc(d.date)}</div><h2>${esc(d.kind==='Rest'?'Full rest':d.kind==='Recovery'?'Active recovery':d.kind==='Class'?'Class + cardio':d.kind==='Home'?'Home session':d.kind==='Gym + home'?'Gym + home':'Gym session')}</h2></div>
       <div class="tags">${d.time!=='none'?`<span class="tag time">Go at ${esc(d.time)}</span>`:''}${d.tags.map(t=>`<span class="tag${/limber/.test(t)?' climb':''}">${esc(t)}</span>`).join('')}</div></div>
     ${d.note?`<p class="note">${esc(d.note)}</p>`:''}
+    ${(()=>{const L=STATE.log[d.n]||{};const st=L.steps||0;const pct=Math.min(100,Math.round(st/GOAL()*100));return `<div class="block mylog"><h3>My day</h3>
+      <div class="steps"><label for="steps-${d.n}">Steps</label><input id="steps-${d.n}" data-log="steps" type="number" inputmode="numeric" min="0" max="100000" step="100" placeholder="0" value="${st||''}"><div class="sbar" aria-hidden="true"><i style="width:${pct}%"></i></div><span class="sgoal" id="sgoal-${d.n}">${goalTxt(st)}</span></div>
+      <div class="sline"><span id="avg-${d.n}">${avgTxt(d.n)}</span><label class="goalset">Daily goal <input id="goal" data-log="goal" type="number" inputmode="numeric" min="1000" max="40000" step="500" value="${GOAL()}"></label></div>
+      <div class="food"><h4>What I ate</h4>${MEALS.map(([k,lab])=>`<label class="meal"><span>${lab}</span><input id="food-${k}-${d.n}" data-log="food" data-meal="${k}" type="text" maxlength="300" placeholder="What and how much" value="${esc((L.food&&L.food[k])||'')}"></label>`).join('')}</div>
+      <label class="lbl" for="note-${d.n}">What I did</label>
+      <textarea id="note-${d.n}" data-log="note" rows="3" maxlength="1000" placeholder="For example: 10k steps and the treadmill only, skipped Chloe Ting">${esc(L.note||'')}</textarea>
+      <label class="done-own"><input type="checkbox" id="complete-${d.n}" data-log="complete" ${L.complete?'checked':''}><span>Count this day as complete</span></label>
+      ${planDone(d)?'<p class="foot">Full plan done today.</p>':(L.complete?'<p class="foot">Counted as complete, your way.</p>':'')}
+    </div>`})()}
     ${d.noWarm?'':(()=>{const leg=d.tags.some(t=>/^Legs/.test(t));return `<div class="block"><h3>Before · ${leg?'hip mobility warm-up':'dynamic warm-up'}</h3><ul class="list">${row('d'+d.n+'-warm',leg?'Hip mobility warm-up, 6 to 7 min (Jessica Bickling)':'Dynamic warm-up, 5 to 6 min','',false,leg?'Loosens hips tight from sitting so the glutes work better. 20 to 30 s or a few reps each.':'Keep moving, no holding positions')}</ul>${moves(leg?MOB:WARM)}</div>`})()}
     <div class="block"><h3>Main work</h3><ul class="list">${d.main.map((m,i)=>row('d'+d.n+'-m'+i,m[0],m[1],m[2],m[3])).join('')}</ul></div>
     ${d.noCool?'':`<div class="block"><h3>After · static stretching</h3><ul class="list">${row('d'+d.n+'-cool','Static stretches, 30 s each side','',false,'Mild tension, slow breathing, no bouncing')}</ul>${moves(COOL)}</div>`}
@@ -387,8 +426,25 @@ document.addEventListener('click',e=>{
   if(c){sel=Number(c.dataset.day);ls(false,String(sel));render();return}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const lb=document.getElementById('lb');if(lb)lb.hidden=true}});
+function stripHTML(){return `<nav class="strip" aria-label="Days">${DAYS.map(x=>(x.n===16?'<span class="sep">Phase 2</span>':x.n===2?'<span class="sep">Phase 1</span>':'')+`<button class="chip${dayDone(x)?' full':''}" data-day="${x.n}" aria-pressed="${x.n===sel}"><span class="k">${esc(x.kind)}</span><span class="n">${x.n}</span><span class="d">${esc(x.date.replace(/ Oct$/,''))}</span>${STATE.log[x.n]&&STATE.log[x.n].steps?`<span class="st${STATE.log[x.n].steps>=GOAL()?' hit':''}">${kfmt(STATE.log[x.n].steps)}</span>`:''}</button>`).join('')}</nav>`;}
+function refreshChips(){const n=document.querySelector('.strip');if(n){const x=n.scrollLeft;n.outerHTML=stripHTML();const m=document.querySelector('.strip');if(m)m.scrollLeft=x;}return;document.querySelectorAll('.chip').forEach(c=>{const d=DAYS.find(x=>x.n===Number(c.dataset.day));c.classList.toggle('full',dayDone(d));});}
+let logTimer=null;
+document.addEventListener('input',e=>{
+  const t=e.target,k=t.dataset&&t.dataset.log;if(!k||k==='complete')return;
+  const L=LOG(sel);
+  if(k==='steps'){const v=Math.max(0,Math.min(100000,parseInt(t.value,10)||0));if(v)L.steps=v;else delete L.steps;
+    const bar=t.parentNode.querySelector('.sbar i');if(bar)bar.style.width=Math.min(100,Math.round(v/GOAL()*100))+'%';
+    const g=document.getElementById('sgoal-'+sel);if(g)g.textContent=goalTxt(v);
+    const a=document.getElementById('avg-'+sel);if(a)a.innerHTML=avgTxt(sel);}
+  if(k==='goal'){const v=parseInt(t.value,10);if(!(v>=1000&&v<=40000))return;STATE.settings.stepGoal=v;const st=(STATE.log[sel]&&STATE.log[sel].steps)||0;const g=document.getElementById('sgoal-'+sel);if(g)g.textContent=goalTxt(st);const bar=document.querySelector('.sbar i');if(bar)bar.style.width=Math.min(100,Math.round(st/v*100))+'%';}
+  if(k==='food'){const m=t.dataset.meal,v=t.value.slice(0,300);L.food=L.food||{};if(v.trim())L.food[m]=v;else delete L.food[m];if(!Object.keys(L.food).length)delete L.food;}
+  if(k==='note'){const v=t.value.slice(0,1000);if(v.trim())L.note=v;else delete L.note;}
+  refreshChips();saveLocal();clearTimeout(logTimer);logTimer=setTimeout(push,600);
+});
 document.addEventListener('change',e=>{
   const t=e.target;
+  if(t.dataset&&t.dataset.log==='complete'){const L=LOG(sel);if(t.checked)L.complete=true;else delete L.complete;render();saveLocal();push();return;}
+  if(t.dataset&&t.dataset.log)return;
   if(t.type!=='checkbox')return;
   if(t.checked)STATE.done[t.id]=true;else delete STATE.done[t.id];
   render(); saveLocal(); push();
