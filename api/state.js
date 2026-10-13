@@ -53,6 +53,23 @@ export default async function handler(req, res) {
         if (Number.isInteger(steps) && steps > 0 && steps <= 100000) e.steps = steps;
         if (typeof v.note === "string" && v.note.trim()) e.note = v.note.slice(0, 1000);
         if (v.complete === true) e.complete = true;
+        for (const k of ["weight", "waist"]) { const n = Number(v[k]); if (n >= 30 && n <= 200) e[k] = Math.round(n * 10) / 10; }
+        { const b = Number(v.bike); if (Number.isInteger(b) && b > 0 && b <= 20) e.bike = b; }
+        if (v.t && typeof v.t === "object") {
+          const t = {};
+          for (const k of ["teethAm", "teethMid", "teethPm", "cal", "pro", "water", "salt", "carb", "sleep", "drinks"]) if (v.t[k] === true) t[k] = true;
+          if (Object.keys(t).length) e.t = t;
+        }
+        if (v.edit && typeof v.edit === "object") {
+          const x = v.edit, ed = {};
+          if (typeof x.title === "string" && x.title.trim()) ed.title = x.title.slice(0, 60);
+          if (typeof x.time === "string") ed.time = x.time.slice(0, 20);
+          if (Array.isArray(x.tags)) { const t = x.tags.filter((t) => typeof t === "string" && t.trim()).slice(0, 8).map((t) => t.slice(0, 30)); if (t.length) ed.tags = t; }
+          if (Array.isArray(x.removed)) { const r = x.removed.filter((id) => typeof id === "string" && /^d\d{1,2}-[a-z]+\d*$/.test(id)).slice(0, 40); if (r.length) ed.removed = r; }
+          if (Array.isArray(x.added)) { const ad = x.added.filter((a) => a && typeof a.id === "string" && /^a\d{1,6}$/.test(a.id) && typeof a.text === "string" && a.text.trim()).slice(0, 20).map((a) => ({ id: a.id, text: a.text.slice(0, 120) })); if (ad.length) ed.added = ad; }
+          if (Number.isInteger(x.seq) && x.seq > 0 && x.seq < 1e6) ed.seq = x.seq;
+          if (Object.keys(ed).some((k) => k !== "seq")) e.edit = ed;
+        }
         if (v.food && typeof v.food === "object") {
           const f = {};
           for (const m of ["b", "l", "s", "d"]) if (typeof v.food[m] === "string" && v.food[m].trim()) f[m] = v.food[m].slice(0, 300);

@@ -174,7 +174,7 @@ const goalTxt=v=>v>=GOAL()?'Goal reached':kfmt(Math.max(0,GOAL()-v))+' to your '
 function avg7(n){const xs=[];for(let i=n;i>n-7&&i>=10;i--){const s=STATE.log[i]&&STATE.log[i].steps;if(s)xs.push(s);}return xs.length?{v:Math.round(xs.reduce((a,b)=>a+b,0)/xs.length),n:xs.length}:null;}
 const avgTxt=n=>{const a=avg7(n);return a?`7-day average: <b>${kfmt(a.v)}</b> over ${a.n} logged day${a.n>1?'s':''}`:'7-day average appears once you log steps'};
 const MEALS=[['b','Breakfast'],['l','Lunch'],['s','Snacks'],['d','Dinner']];
-const TARGETS=[['cal','1400 to 1500 kcal, up to 1600 on heavy days'],['pro','Protein 110 to 130 g'],['water','Water 2.5 to 3 L'],['salt','Low salt, nothing processed'],['carb','Carbs only around training'],['sleep','Slept 7 h or more'],['drinks','No fizzy drinks or alcohol']];
+const TARGETS=[['teethAm','Brushed teeth, morning'],['teethMid','Brushed teeth, after lunch (if home)'],['teethPm','Brushed teeth, night'],['cal','1400 to 1500 kcal, up to 1600 on heavy days'],['pro','Protein 110 to 130 g'],['water','Water 2.5 to 3 L'],['salt','Low salt, nothing processed'],['carb','Carbs only around training'],['sleep','Slept 7 h or more'],['drinks','No fizzy drinks or alcohol']];
 function wavg(n,k){const xs=[];for(let i=n;i>n-7&&i>=10;i--){const v=STATE.log[i]&&STATE.log[i][k];if(v)xs.push(v);}return xs.length?(xs.reduce((a,b)=>a+b,0)/xs.length).toFixed(1):null;}
 const SYNC={pass:null,status:'',timer:null,busy:false};
 try{SYNC.pass=localStorage.getItem('reboot15-pass')}catch(e){}
