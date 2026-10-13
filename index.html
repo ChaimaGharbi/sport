@@ -240,7 +240,7 @@ const HIP = [
 ];
 const MOB = [["Leg swings front to back, 10 per leg","swing"],["Knee raise and open out to the side, 8 per leg","kneeup"],["Half-kneeling hip flexor stretch, push front knee out, 30 s","hipf"],["Same position, side reach overhead, 5 per side","hipf"],["Pigeon, then grab the back foot, 30 s per side","glute"],["90/90 hip switches, 8 per side","glute"],["Deep squat hold, elbows push knees out, 30 s","squat"],["Forward fold into a squat, 5 slow reps","ham"]];
 const TM = (min, inc, sp) => ["Treadmill "+min+" min: "+sp+" km/h, incline "+inc+"%", "treadmill", false, "3 min flat to start, 2 min flat to finish. Don't hold the rails."];
-const SC = (min, lvl, how) => ["Stair climber "+min+" min, level "+lvl, "climber", true, how];
+const SC = (min, spm, how) => ["Stair climber "+min+" min, "+spm+" steps/min", "climber", true, how+" First 2 min at 25 to 30. Adjust so you can still talk."];
 
 const CT = n => ["Chloe Ting 2024 Weight Loss Challenge, workout "+n, "", false, "Skip the warm-up video after a gym morning. Low-impact versions on strength days."];
 const HOME = (n,hip) => ({time:"16:00",label:"Chloe Ting at home",core:true,items:hip?[CT(n),...HIP]:[CT(n)]});
@@ -251,46 +251,46 @@ const WALK = m => ({time:"16:00",label:"Afternoon",core:true,items:[["Walk "+m+"
 const DAYS = [
  {n:10,date:"Wed 14 Oct",kind:"Gym + home",time:"09:00",tags:["Legs: quads","Climber 12","Chloe Ting 1"],
   note:"Go one notch heavier on any move where 12 reps felt easy last week.",
-  main:[TM(10,10,"5.0"),SC(12,"4","Steady."),...SA("3 x 12")],pm:HOME(1),eve:[Z2]},
+  main:[TM(10,10,"5.0"),SC(12,"40","Steady."),...SA("3 x 12")],pm:HOME(1),eve:[Z2]},
  {n:11,date:"Thu 15 Oct",kind:"Gym + home",time:"09:00",tags:["Cardio","Climber 18","Chloe Ting 2"],
-  main:[TM(15,10,"5.0"),SC(18,"4 / 5","Alternate 1 min level 5, 1 min level 4.")],pm:HOME(2,true),eve:[Z2]},
+  main:[TM(15,10,"5.0"),SC(18,"50 / 40","Alternate 1 min at 50, 1 min at 40.")],pm:HOME(2,true),eve:[Z2]},
  {n:12,date:"Fri 16 Oct",kind:"Gym + home",time:"09:00",tags:["Legs: glutes","Climber 12","Chloe Ting 3"],
-  main:[TM(10,10,"5.0"),SC(12,"4","Steady."),...SB("3 x 12")],pm:HOME(3),eve:[Z2]},
- {n:13,date:"Sat 17 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + posture","Climber 15","Chloe Ting 4"],main:[TM(15,10,"5.0"),SC(15,"4","Steady."),...UP("3 x 12"),CORE],pm:HOME(4,true),eve:[Z2]},
- {n:14,date:"Sun 18 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + core","Climber 15","Chloe Ting 5"],main:[TM(20,10,"5.0"),SC(15,"4","Steady."),CORE],pm:HOME(5,true),eve:[Z2]},
- {n:15,date:"Mon 19 Oct",kind:"Gym + home",time:"09:00",tags:["Cardio + core","Climber 25","CT rest day"],main:[TM(25,10,"5.0"),SC(25,"4","Continuous."),CORE],pm:WALK(30),eve:[Z2]},
+  main:[TM(10,10,"5.0"),SC(12,"40","Steady."),...SB("3 x 12")],pm:HOME(3),eve:[Z2]},
+ {n:13,date:"Sat 17 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + posture","Climber 15","Chloe Ting 4"],main:[TM(15,10,"5.0"),SC(15,"40","Steady."),...UP("3 x 12"),CORE],pm:HOME(4,true),eve:[Z2]},
+ {n:14,date:"Sun 18 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + core","Climber 15","Chloe Ting 5"],main:[TM(20,10,"5.0"),SC(15,"40","Steady."),CORE],pm:HOME(5,true),eve:[Z2]},
+ {n:15,date:"Mon 19 Oct",kind:"Gym + home",time:"09:00",tags:["Cardio + core","Climber 25","CT rest day"],main:[TM(25,10,"5.0"),SC(25,"40","Continuous."),CORE],pm:WALK(30),eve:[Z2]},
  {n:16,date:"Tue 20 Oct",kind:"Gym + home",time:"09:00",tags:["Cardio + posture","Climber 20","CT rest day"],
   
-  main:[TM(15,10,"5.0"),SC(20,"4","Continuous, or two blocks of 10 min."),...UP("3 x 12")],pm:WALK(30),eve:[Z2]},
+  main:[TM(15,10,"5.0"),SC(20,"40","Continuous, or two blocks of 10 min."),...UP("3 x 12")],pm:WALK(30),eve:[Z2]},
  {n:17,date:"Wed 21 Oct",kind:"Gym + home",time:"09:00",tags:["Legs: quads","Heavier","Chloe Ting 6"],
   note:"Phase 2 strength: 3 sets of 10 with a bit more weight. The last 2 reps should be hard but clean.",
-  main:[TM(10,10,"5.0"),SC(12,"4","Steady."),...SA("3 x 10, heavier")],pm:HOME(6),eve:[Z2]},
+  main:[TM(10,10,"5.0"),SC(12,"40","Steady."),...SA("3 x 10, heavier")],pm:HOME(6),eve:[Z2]},
  {n:18,date:"Thu 22 Oct",kind:"Gym + home",time:"09:00",tags:["Climber intervals","Chloe Ting 7"],
-  main:[SC(20,"3 / 5","Alternate 1 min level 5, 1 min level 3."),TM(15,10,"5.0")],pm:HOME(7,true),eve:[Z2]},
+  main:[SC(20,"50 / 35","Alternate 1 min at 50, 1 min at 35."),TM(15,10,"5.0")],pm:HOME(7,true),eve:[Z2]},
  {n:19,date:"Fri 23 Oct",kind:"Gym + home",time:"09:00",tags:["Legs: glutes","Heavier","Chloe Ting 8"],
-  main:[TM(10,10,"5.0"),SC(12,"4","Steady."),...SB("3 x 10, heavier")],pm:HOME(8),eve:[Z2]},
- {n:20,date:"Sat 24 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + posture","Climber 20","Chloe Ting 9"],main:[TM(15,12,"5.0"),SC(20,"4","Steady."),...UP("3 x 12"),CORE],pm:HOME(9,true),eve:[Z2]},
- {n:21,date:"Sun 25 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + core","Climber 20","Chloe Ting 10"],main:[TM(20,12,"5.0"),SC(20,"4","Steady."),CORE],pm:HOME(10,true),eve:[Z2]},
- {n:22,date:"Mon 26 Oct",kind:"Gym + home",time:"09:00",tags:["Cardio + core","Climber 20","CT rest day"],main:[TM(20,12,"5.0"),SC(20,"4 to 5","Steady."),CORE],pm:WALK(30),eve:[Z2]},
+  main:[TM(10,10,"5.0"),SC(12,"40","Steady."),...SB("3 x 10, heavier")],pm:HOME(8),eve:[Z2]},
+ {n:20,date:"Sat 24 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + posture","Climber 20","Chloe Ting 9"],main:[TM(15,12,"5.0"),SC(20,"40","Steady."),...UP("3 x 12"),CORE],pm:HOME(9,true),eve:[Z2]},
+ {n:21,date:"Sun 25 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + core","Climber 20","Chloe Ting 10"],main:[TM(20,12,"5.0"),SC(20,"40","Steady."),CORE],pm:HOME(10,true),eve:[Z2]},
+ {n:22,date:"Mon 26 Oct",kind:"Gym + home",time:"09:00",tags:["Cardio + core","Climber 20","CT rest day"],main:[TM(20,12,"5.0"),SC(20,"40 to 45","Steady."),CORE],pm:WALK(30),eve:[Z2]},
  {n:23,date:"Tue 27 Oct",kind:"Gym + home",time:"09:00",tags:["Cardio + posture","Climber 22","CT rest day"],
-  main:[TM(15,12,"5.0"),SC(22,"4 to 5","Continuous."),...UP("3 x 12")],pm:WALK(30),eve:[Z2]},
+  main:[TM(15,12,"5.0"),SC(22,"40 to 45","Continuous."),...UP("3 x 12")],pm:WALK(30),eve:[Z2]},
  {n:24,date:"Wed 28 Oct",kind:"Gym + home",time:"09:00",tags:["Legs: quads","Chloe Ting 11"],
-  main:[TM(10,12,"5.0"),SC(15,"4","Steady."),...SA("3 x 10, heavier")],pm:HOME(11),eve:[Z2]},
+  main:[TM(10,12,"5.0"),SC(15,"40","Steady."),...SA("3 x 10, heavier")],pm:HOME(11),eve:[Z2]},
  {n:25,date:"Thu 29 Oct",kind:"Gym + home",time:"09:00",tags:["Climber 25","Chloe Ting 12"],
   note:"Longest climber session of the plan. Steady pace, not a race.",
-  main:[SC(25,"4","Continuous."),TM(15,12,"5.0")],pm:HOME(12),eve:[Z2]},
+  main:[SC(25,"40","Continuous."),TM(15,12,"5.0")],pm:HOME(12),eve:[Z2]},
  {n:26,date:"Fri 30 Oct",kind:"Gym + home",time:"09:00",tags:["Legs: glutes","Chloe Ting 13"],
   note:"Last heavy strength session before the wedding.",
-  main:[TM(10,12,"5.0"),SC(15,"4","Steady."),...SB("3 x 10, heavier")],pm:HOME(13),eve:[Z2]},
- {n:27,date:"Sat 31 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + posture","Climber 22","Chloe Ting 14"],main:[TM(15,12,"5.0"),SC(22,"4 to 5","Steady."),...UP("3 x 12"),CORE],pm:HOME(14,true),eve:[Z2]},
- {n:28,date:"Sun 1 Nov",kind:"Gym + home",time:"10:00",tags:["Cardio + core","Climber 22","Chloe Ting 15"],main:[TM(20,12,"5.0"),SC(22,"4","Steady."),CORE],pm:HOME(15,true),eve:[Z2]},
- {n:29,date:"Mon 2 Nov",kind:"Gym + home",time:"09:00",tags:["Cardio + core","Wedding week","CT rest day"],main:[TM(20,10,"5.0"),SC(15,"4","Steady."),CORE],pm:WALK(30),eve:[Z2]},
+  main:[TM(10,12,"5.0"),SC(15,"40","Steady."),...SB("3 x 10, heavier")],pm:HOME(13),eve:[Z2]},
+ {n:27,date:"Sat 31 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + posture","Climber 22","Chloe Ting 14"],main:[TM(15,12,"5.0"),SC(22,"40 to 45","Steady."),...UP("3 x 12"),CORE],pm:HOME(14,true),eve:[Z2]},
+ {n:28,date:"Sun 1 Nov",kind:"Gym + home",time:"10:00",tags:["Cardio + core","Climber 22","Chloe Ting 15"],main:[TM(20,12,"5.0"),SC(22,"40","Steady."),CORE],pm:HOME(15,true),eve:[Z2]},
+ {n:29,date:"Mon 2 Nov",kind:"Gym + home",time:"09:00",tags:["Cardio + core","Wedding week","CT rest day"],main:[TM(20,10,"5.0"),SC(15,"40","Steady."),CORE],pm:WALK(30),eve:[Z2]},
  {n:30,date:"Tue 3 Nov",kind:"Gym + home",time:"09:00",tags:["Wedding week","Lighter","CT rest day"],
   note:"Wedding week: lighter so you're fresh, not sore. Fiber stays high until today.",
-  main:[TM(15,10,"5.0"),SC(15,"4","Steady."),...SA("2 x 12, lighter")],pm:WALK(30),eve:[Z2]},
+  main:[TM(15,10,"5.0"),SC(15,"40","Steady."),...SA("2 x 12, lighter")],pm:WALK(30),eve:[Z2]},
  {n:31,date:"Wed 4 Nov",kind:"Gym",time:"09:00",tags:["Last session","Easy","Chloe Ting 16"],
   note:"From today to the 6th: low-fiber, low-salt meals (eggs, chicken, fish, a little white rice, cooked vegetables). Keep drinking water. Moderate carbs the evening before the wedding.",
-  main:[TM(25,10,"5.0"),SC(10,"3","Easy.")],pm:HOME(16),eve:[Z2]}
+  main:[TM(25,10,"5.0"),SC(10,"35","Easy.")],pm:HOME(16),eve:[Z2]}
 ];
 
 const KEY='reboot15-day';
