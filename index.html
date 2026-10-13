@@ -106,6 +106,27 @@ h3{font-size:1.25rem;text-transform:uppercase;letter-spacing:.06em;color:var(--m
 .food h4{margin:4px 0 0;font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font-size:1rem;color:var(--muted)}
 .meal{display:grid;grid-template-columns:84px 1fr;gap:8px;align-items:center;font-size:.9rem;color:var(--muted)}
 .mylog input[type=text]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;min-width:0;width:100%;box-sizing:border-box}
+.ebtn{font:inherit;font-size:.85rem;padding:4px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;white-space:nowrap}
+.ebtn-main{border-color:var(--pulse);color:var(--pulse);font-weight:700}
+.dayhead .ebtn-main{align-self:flex-start}
+.editor{background:var(--bg);border-radius:12px;padding:12px}
+.editor input{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;width:100%;box-sizing:border-box;min-width:0}
+.erow{display:grid;grid-template-columns:1fr 2fr;gap:8px}
+.eadd{display:flex;gap:8px}
+.rem{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.rem li{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:.9rem;color:var(--muted)}
+.check.edit{grid-template-columns:auto 1fr auto;align-items:center}
+.etext{min-width:0}
+@media (max-width:420px){.erow{grid-template-columns:1fr}}
+.targets{display:grid;gap:8px}
+.targets h4{margin:4px 0 0;font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font-size:1rem;color:var(--muted)}
+.nums{display:flex;flex-wrap:wrap;gap:10px}
+.nums label{display:flex;gap:6px;align-items:center;font-size:.9rem;color:var(--muted)}
+.nums input{width:80px!important}
+.of{font-size:.8rem}
+.tlist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.tlist label{display:flex;gap:10px;align-items:center;cursor:pointer}
+.tlist input{width:22px;height:22px;accent-color:var(--done);flex:none}
 .lb[hidden]{display:none}
 .lb figure{margin:0;display:grid;gap:8px;max-width:min(720px,100%)}
 .lb img{width:100%;border-radius:10px;background:#fff}
@@ -147,11 +168,13 @@ STATE.log=STATE.log||{};STATE.settings=STATE.settings||{};
 try{const saved=JSON.parse(localStorage.getItem('reboot15-done')||'null');if(saved&&typeof saved==='object')STATE.done=saved;const lg=JSON.parse(localStorage.getItem('reboot15-log')||'null');if(lg&&typeof lg==='object')STATE.log=lg;const st=JSON.parse(localStorage.getItem('reboot15-settings')||'null');if(st&&typeof st==='object')STATE.settings=st;}catch(e){}
 const saveLocal=()=>{try{localStorage.setItem('reboot15-done',JSON.stringify(STATE.done));localStorage.setItem('reboot15-log',JSON.stringify(STATE.log));localStorage.setItem('reboot15-settings',JSON.stringify(STATE.settings))}catch(e){}};
 const LOG=n=>STATE.log[n]||(STATE.log[n]={});
-const GOAL=()=>STATE.settings.stepGoal||8000;
+const GOAL=()=>STATE.settings.stepGoal||12000;
 const goalTxt=v=>v>=GOAL()?'Goal reached':kfmt(Math.max(0,GOAL()-v))+' to your '+kfmt(GOAL())+' goal';
 function avg7(n){const xs=[];for(let i=n;i>n-7&&i>=2;i--){const s=STATE.log[i]&&STATE.log[i].steps;if(s)xs.push(s);}return xs.length?{v:Math.round(xs.reduce((a,b)=>a+b,0)/xs.length),n:xs.length}:null;}
 const avgTxt=n=>{const a=avg7(n);return a?`7-day average: <b>${kfmt(a.v)}</b> over ${a.n} logged day${a.n>1?'s':''}`:'7-day average appears once you log steps'};
 const MEALS=[['b','Breakfast'],['l','Lunch'],['s','Snacks'],['d','Dinner']];
+const TARGETS=[['cal','1400 to 1500 kcal, up to 1600 on heavy days'],['pro','Protein 110 to 130 g'],['water','Water 2.5 to 3 L'],['salt','Low salt, nothing processed'],['carb','Carbs only around training'],['sleep','Slept 7 h or more'],['drinks','No fizzy drinks or alcohol']];
+function wavg(n,k){const xs=[];for(let i=n;i>n-7&&i>=2;i--){const v=STATE.log[i]&&STATE.log[i][k];if(v)xs.push(v);}return xs.length?(xs.reduce((a,b)=>a+b,0)/xs.length).toFixed(1):null;}
 const SYNC={pass:null,status:'',timer:null,busy:false};
 try{SYNC.pass=localStorage.getItem('reboot15-pass')}catch(e){}
 function setStatus(t){SYNC.status=t;const el=document.getElementById('save');if(el)el.textContent=t;}
@@ -188,7 +211,7 @@ const ANIM = (k,alt) => { const f=IMG[k]; if(!f) return ''; const a=Array.isArra
 const WARM = [["March with high knees, 1 min","march"],["Arm circles, 30 s each way","armc"],["Leg swings, 10 per leg","swing"],["Hip circles, 10 each way","hipc"],["Squat to calf raise, 10","squat"],["Walking lunge with twist, 8 per side","lunge"]];
 const COOL = [["Standing quad stretch, foot on a step or in your hand","quad"],["Seated hamstring stretch","ham"],["Wall calf stretch","calf"],["Chest opener, arms wide and back","chest"],["Kneeling hip flexor stretch","hipf"],["Figure 4 glute stretch, lying","glute"],["Child's pose","child"]];
 
-const hard = s => s.startsWith("2") ? "" : " Last 2 reps should feel close to failure.";
+const hard = s => " Moderate: leave 1 to 2 reps in reserve.";
 const SA = s => [
   ["Leg press, feet narrow and low on the platform, "+s,"legpress",false,"Outer quad focus. Knees all the way to the chest, never lock the knees at the top."+hard(s)],
   ["Deficit goblet squat, "+s,"goblet",false,"Heels on a small plate for a deeper squat. Amanda's main quad move."],
@@ -215,11 +238,14 @@ const HIP = [
   ["Hip finisher: side-lying leg raises, toes pointing slightly down, 2 x 15 per leg","sideraise",false,"Lying on your side, top leg internally rotated. The one commenters say helps most."]
 ];
 const MOB = [["Leg swings front to back, 10 per leg","swing"],["Knee raise and open out to the side, 8 per leg","kneeup"],["Half-kneeling hip flexor stretch, push front knee out, 30 s","hipf"],["Same position, side reach overhead, 5 per side","hipf"],["Pigeon, then grab the back foot, 30 s per side","glute"],["90/90 hip switches, 8 per side","glute"],["Deep squat hold, elbows push knees out, 30 s","squat"],["Forward fold into a squat, 5 slow reps","ham"]];
-const TM = (min, inc, sp) => ["Treadmill "+min+" min: "+sp+" km/h, incline "+inc+"%", "treadmill", false, "3 min easy start, finish 2 min easy"];
+const TM = (min, inc, sp) => ["Treadmill "+min+" min: "+sp+" km/h, incline "+inc+"%", "treadmill", false, "3 min flat to start, 2 min flat to finish. Don't hold the rails."];
 const SC = (min, lvl, how) => ["Stair climber "+min+" min, level "+lvl, "climber", true, how];
 
 const CT = n => ["Chloe Ting 2024 Weight Loss Challenge, Day "+n, "", false, "Skip the warm-up video after a gym morning. Low-impact versions on strength days."];
 const HOME = (n,hip) => ({time:"16:00",label:"Chloe Ting at home",core:true,items:hip?[CT(n),...HIP]:[CT(n)]});
+const Z2 = ["Zone 2 bike, 60 min","",false,"Around 19:00, before dinner. You can talk in full sentences, about 120 to 140 bpm. Finish 90 min before bed."];
+const CORE = ["Core: dead bug 2 x 10 per side + stomach vacuum 3 x 20 s","deadbug",false,"Deep core for the waist."];
+const WALK = m => ({time:"16:00",label:"Afternoon",core:true,items:[["Walk "+m+" min, easy pace","",false,"Chloe Ting rest day in the program."]]});
 const DAYS = [
  {n:2,date:"Tue 6 Oct",kind:"Gym + home",time:"09:00",tags:["Cardio + posture","Climber 8","Chloe Ting 1"],
   note:"Your cardio base is good, so start brisk: you should be able to talk, but not chat easily.",
@@ -241,92 +267,90 @@ const DAYS = [
   note:"Full rest, non-negotiable while you're in a deficit. Normal steps and gentle stretching only. Chloe Ting rest day.",
   main:[["Rest. Normal daily steps, sleep well, drink water",""]], noWarm:true},
  {n:9,date:"Tue 13 Oct",kind:"Gym + home",time:"09:00",tags:["Cardio + posture","Climber 15","Chloe Ting 6"],
-  note:"If legs still feel the hike, keep the climber steady instead of pushing the level.",
+  
   main:[TM(15,6,"5.8"),SC(15,"4","Two blocks of 7.5 min, 1 min rest between."),...UP("3 x 12")],pm:HOME(6,true)},
  {n:10,date:"Wed 14 Oct",kind:"Gym + home",time:"09:00",tags:["Legs: quads","Climber 12","Chloe Ting 7"],
   note:"Go one notch heavier on any move where 12 reps felt easy last week.",
-  main:[TM(10,6,"5.8"),SC(12,"4","Steady."),...SA("3 x 12")],pm:HOME(7)},
+  main:[TM(10,10,"5.0"),SC(12,"4","Steady."),...SA("3 x 12")],pm:HOME(7),eve:[Z2]},
  {n:11,date:"Thu 15 Oct",kind:"Gym + home",time:"09:00",tags:["Cardio","Climber 18","Chloe Ting 8"],
-  main:[TM(15,7,"6.0"),SC(18,"4 / 5","Alternate 1 min level 5, 1 min level 4.")],pm:HOME(8,true)},
+  main:[TM(15,10,"5.0"),SC(18,"4 / 5","Alternate 1 min level 5, 1 min level 4.")],pm:HOME(8,true),eve:[Z2]},
  {n:12,date:"Fri 16 Oct",kind:"Gym + home",time:"09:00",tags:["Legs: glutes","Climber 12","Chloe Ting 9"],
-  main:[TM(10,6,"5.8"),SC(12,"4","Steady."),...SB("3 x 12")],pm:HOME(9)},
- {n:13,date:"Sat 17 Oct",kind:"Home",time:"11:00",tags:["Chloe Ting 10","Walk"],
-  main:[CT(10),...HIP,["Walk 30 to 40 min","treadmill",false,"Outside is perfect"]]},
- {n:14,date:"Sun 18 Oct",kind:"Recovery",time:"any",tags:["Active rest"],
-  note:"Chloe Ting rest day. An easy walk and a full stretch, nothing more.",
-  main:[["Easy walk 30 to 40 min",""],["Full static stretching, 10 min (pictures below)",""]], noWarm:true},
- {n:15,date:"Mon 19 Oct",kind:"Gym",time:"09:00",tags:["Check-in day","Climber 25"],
-  note:"Last day of the phase, and a Chloe Ting rest day. Compare with day 1 (1.3 km in 23 min). Next: phase 2 up to the wedding.",
-  main:[TM(25,6,"6.0"),SC(25,"4","Continuous. Note how it feels versus day 2.")]}
-,
+  main:[TM(10,10,"5.0"),SC(12,"4","Steady."),...SB("3 x 12")],pm:HOME(9),eve:[Z2]},
+ {n:13,date:"Sat 17 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + posture","Climber 15","Chloe Ting 10"],main:[TM(15,10,"5.0"),SC(15,"4","Steady."),...UP("3 x 12"),CORE],pm:HOME(10,true),eve:[Z2]},
+ {n:14,date:"Sun 18 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + core","Climber 15"],main:[TM(20,10,"5.0"),SC(15,"4","Steady."),CORE],pm:WALK(30),eve:[Z2]},
+ {n:15,date:"Mon 19 Oct",kind:"Gym + home",time:"09:00",tags:["Check-in day","Climber 25"],note:"Compare with day 1 (1.3 km in 23 min).",main:[TM(25,10,"5.0"),SC(25,"4","Continuous."),CORE],pm:WALK(30),eve:[Z2]},
  {n:16,date:"Tue 20 Oct",kind:"Gym + home",time:"09:00",tags:["Cardio + posture","Climber 20","Chloe Ting 11"],
   note:"Phase 2 starts. Same structure, more climber, heavier strength. Chloe Ting continues in its own order.",
-  main:[TM(15,7,"6.0"),SC(20,"4","Continuous, or two blocks of 10 min."),...UP("3 x 12")],pm:HOME(11,true)},
+  main:[TM(15,10,"5.0"),SC(20,"4","Continuous, or two blocks of 10 min."),...UP("3 x 12")],pm:HOME(11,true),eve:[Z2]},
  {n:17,date:"Wed 21 Oct",kind:"Gym + home",time:"09:00",tags:["Legs: quads","Heavier","Chloe Ting 12"],
   note:"Phase 2 strength: 3 sets of 10 with a bit more weight. The last 2 reps should be hard but clean.",
-  main:[TM(10,6,"5.8"),SC(12,"4","Steady."),...SA("3 x 10, heavier")],pm:HOME(12)},
+  main:[TM(10,10,"5.0"),SC(12,"4","Steady."),...SA("3 x 10, heavier")],pm:HOME(12),eve:[Z2]},
  {n:18,date:"Thu 22 Oct",kind:"Gym + home",time:"09:00",tags:["Climber intervals","Chloe Ting 13"],
-  main:[SC(20,"3 / 5","Alternate 1 min level 5, 1 min level 3."),TM(15,8,"5.8")],pm:HOME(13,true)},
+  main:[SC(20,"3 / 5","Alternate 1 min level 5, 1 min level 3."),TM(15,10,"5.0")],pm:HOME(13,true),eve:[Z2]},
  {n:19,date:"Fri 23 Oct",kind:"Gym + home",time:"09:00",tags:["Legs: glutes","Heavier","Chloe Ting 14"],
-  main:[TM(10,6,"5.8"),SC(12,"4","Steady."),...SB("3 x 10, heavier")],pm:HOME(14)},
- {n:20,date:"Sat 24 Oct",kind:"Home",time:"11:00",tags:["Chloe Ting 15","Walk"],
-  main:[CT(15),...HIP,["Walk 40 min","treadmill",false,"Outside is perfect"]]},
- {n:21,date:"Sun 25 Oct",kind:"Recovery",time:"any",tags:["Active rest"],
-  note:"Chloe Ting rest day. Easy walk and a full stretch.",
-  main:[["Easy walk 30 to 45 min",""],["Full static stretching, 10 min (pictures below)",""]], noWarm:true},
- {n:22,date:"Mon 26 Oct",kind:"Rest",time:"none",tags:["Full rest"],
-  note:"Full rest. Normal steps only.",
-  main:[["Rest. Normal daily steps, sleep well, drink water",""]], noWarm:true},
+  main:[TM(10,10,"5.0"),SC(12,"4","Steady."),...SB("3 x 10, heavier")],pm:HOME(14),eve:[Z2]},
+ {n:20,date:"Sat 24 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + posture","Climber 20","Chloe Ting 15"],main:[TM(15,12,"5.0"),SC(20,"4","Steady."),...UP("3 x 12"),CORE],pm:HOME(15,true),eve:[Z2]},
+ {n:21,date:"Sun 25 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + core","Climber 20"],main:[TM(20,12,"5.0"),SC(20,"4","Steady."),CORE],pm:WALK(30),eve:[Z2]},
+ {n:22,date:"Mon 26 Oct",kind:"Gym + home",time:"09:00",tags:["Cardio + core","Climber 20"],main:[TM(20,12,"5.0"),SC(20,"4 to 5","Steady."),CORE],pm:WALK(30),eve:[Z2]},
  {n:23,date:"Tue 27 Oct",kind:"Gym + home",time:"09:00",tags:["Cardio + posture","Climber 22","Chloe Ting 16"],
-  main:[TM(15,8,"6.0"),SC(22,"4 to 5","Continuous."),...UP("3 x 12")],pm:HOME(16,true)},
+  main:[TM(15,12,"5.0"),SC(22,"4 to 5","Continuous."),...UP("3 x 12")],pm:HOME(16,true),eve:[Z2]},
  {n:24,date:"Wed 28 Oct",kind:"Gym + home",time:"09:00",tags:["Legs: quads","Chloe Ting 17"],
-  main:[TM(10,6,"5.8"),SC(15,"4","Steady."),...SA("3 x 10, heavier")],pm:HOME(17)},
+  main:[TM(10,12,"5.0"),SC(15,"4","Steady."),...SA("3 x 10, heavier")],pm:HOME(17),eve:[Z2]},
  {n:25,date:"Thu 29 Oct",kind:"Gym + home",time:"09:00",tags:["Climber 25","Chloe Ting 18"],
   note:"Longest climber session of the plan. Steady pace, not a race.",
-  main:[SC(25,"4","Continuous."),TM(15,8,"5.8")],pm:HOME(18,true)},
+  main:[SC(25,"4","Continuous."),TM(15,12,"5.0")],pm:HOME(18,true),eve:[Z2]},
  {n:26,date:"Fri 30 Oct",kind:"Gym + home",time:"09:00",tags:["Legs: glutes","Chloe Ting 19"],
   note:"Last heavy strength session before the wedding.",
-  main:[TM(10,6,"5.8"),SC(15,"4","Steady."),...SB("3 x 10, heavier")],pm:HOME(19)},
- {n:27,date:"Sat 31 Oct",kind:"Home",time:"11:00",tags:["Chloe Ting 20","Walk"],
-  main:[CT(20),...HIP,["Walk 45 min","treadmill",false,"Outside is perfect"]]},
- {n:28,date:"Sun 1 Nov",kind:"Recovery",time:"any",tags:["Active rest"],
-  note:"Chloe Ting rest day. Easy walk and a full stretch.",
-  main:[["Easy walk 30 to 45 min",""],["Full static stretching, 10 min (pictures below)",""]], noWarm:true},
- {n:29,date:"Mon 2 Nov",kind:"Rest",time:"none",tags:["Full rest"],
-  note:"Full rest. Wedding week starts tomorrow.",
-  main:[["Rest. Normal daily steps, sleep well, drink water",""]], noWarm:true},
+  main:[TM(10,12,"5.0"),SC(15,"4","Steady."),...SB("3 x 10, heavier")],pm:HOME(19),eve:[Z2]},
+ {n:27,date:"Sat 31 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + posture","Climber 22","Chloe Ting 20"],main:[TM(15,12,"5.0"),SC(22,"4 to 5","Steady."),...UP("3 x 12"),CORE],pm:HOME(20,true),eve:[Z2]},
+ {n:28,date:"Sun 1 Nov",kind:"Gym + home",time:"10:00",tags:["Cardio + core","Climber 22"],main:[TM(20,12,"5.0"),SC(22,"4","Steady."),CORE],pm:WALK(30),eve:[Z2]},
+ {n:29,date:"Mon 2 Nov",kind:"Gym + home",time:"09:00",tags:["Cardio + core","Wedding week"],main:[TM(20,10,"5.0"),SC(15,"4","Steady."),CORE],pm:WALK(30),eve:[Z2]},
  {n:30,date:"Tue 3 Nov",kind:"Gym + home",time:"09:00",tags:["Wedding week","Lighter"],
-  note:"Wedding week: everything lighter so you're fresh, not sore, on the 7th. Lower salt from today.",
-  main:[TM(15,6,"5.8"),SC(15,"4","Steady."),...SA("2 x 12, lighter")],pm:{time:"16:00",label:"Chloe Ting at home",core:true,items:[["Chloe Ting 2024 Weight Loss Challenge, Day 21","",false,"Low-impact versions only this week."]]}},
+  note:"Wedding week: lighter so you're fresh, not sore. Fiber stays high until today.",
+  main:[TM(15,10,"5.0"),SC(15,"4","Steady."),...SA("2 x 12, lighter")],pm:{time:"16:00",label:"Chloe Ting at home",core:true,items:[["Chloe Ting 2024 Weight Loss Challenge, Day 21","",false,"Low-impact versions only this week."]]},eve:[Z2]},
  {n:31,date:"Wed 4 Nov",kind:"Gym",time:"09:00",tags:["Last session","Easy"],
-  note:"Last session before Paris. Easy cardio and a long stretch. Pack tonight.",
-  main:[TM(25,5,"5.5"),SC(10,"3","Easy.")]}
+  note:"From today to the 6th: low-fiber, low-salt meals (eggs, chicken, fish, a little white rice, cooked vegetables). Keep drinking water. Moderate carbs the evening before the wedding.",
+  main:[TM(25,10,"5.0"),SC(10,"3","Easy.")],eve:[Z2]}
 ];
 
 const KEY='reboot15-day';
 function ls(get,v){try{return get?localStorage.getItem(KEY):localStorage.setItem(KEY,v)}catch(e){return null}}
 
-function dayItems(d){
+const ED=n=>(STATE.log[n]&&STATE.log[n].edit)||{};
+const isRemoved=(n,id)=>(ED(n).removed||[]).includes(id);
+function baseItems(d){
   const ids=[];
   if(!d.noWarm) ids.push('d'+d.n+'-warm');
   d.main.forEach((_,i)=>ids.push('d'+d.n+'-m'+i));
   if(!d.noCool) ids.push('d'+d.n+'-cool');
   if(d.pm) d.pm.items.forEach((_,i)=>ids.push('d'+d.n+'-p'+i));
+  if(d.eve) d.eve.forEach((_,i)=>ids.push('d'+d.n+'-e'+i));
   return ids;
 }
-function coreItems(d){return dayItems(d).filter(id=>d.pm&&d.pm.core||!id.includes('-p'))}
-function planDone(d){return coreItems(d).every(id=>STATE.done[id])}
+function dayItems(d){return baseItems(d).filter(id=>!isRemoved(d.n,id)).concat((ED(d.n).added||[]).map(a=>'d'+d.n+'-'+a.id))}
+function coreItems(d){return dayItems(d).filter(id=>d.pm&&d.pm.core||!/-p\d+$/.test(id))}
+let editing=false;
+function labelOf(d,id){const k=id.split('-').pop();if(k==='warm')return 'Warm-up';if(k==='cool')return 'Static stretching';const i=Number(k.slice(1));if(k[0]==='m')return d.main[i]?d.main[i][0]:id;if(k[0]==='p')return d.pm&&d.pm.items[i]?d.pm.items[i][0]:id;if(k[0]==='e')return d.eve&&d.eve[i]?d.eve[i][0]:id;return id;}
+function EDW(n){const L=LOG(n);L.edit=L.edit||{};return L.edit;}
+function cleanEdit(n){const L=STATE.log[n];if(!L||!L.edit)return;const E=L.edit;['removed','added','tags'].forEach(k=>{if(E[k]&&!E[k].length)delete E[k]});['title','time'].forEach(k=>{if(E[k]==='')delete E[k]});if(Object.keys(E).filter(k=>k!=='seq').length===0)delete L.edit;}
+function commit(){saveLocal();push();}
+function planDone(d){const c=coreItems(d);return c.length>0&&c.every(id=>STATE.done[id])}
 function dayDone(d){return planDone(d)||!!(STATE.log[d.n]&&STATE.log[d.n].complete)}
 const kfmt=n=>n>=1000?(Math.round(n/100)/10).toString().replace(/\.0$/,'')+'k':String(n);
 function allIds(){return DAYS.flatMap(coreItems)}
 
-let sel = Number(ls(true)) || (DAYS.find(d=>!dayDone(d))||DAYS[0]).n;
+const isoOf=n=>{const d=new Date(2026,9,4+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const todayIso=(()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})();
+let sel = (DAYS.find(d=>isoOf(d.n)>=todayIso)||DAYS[DAYS.length-1]).n;
 if(!DAYS.some(d=>d.n===sel)) sel=DAYS[0].n;
 
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function pic(k,alt){return IMG[k]?`<button type="button" class="thumb" data-big="${k}" aria-label="Enlarge picture: ${esc(alt)}">${ANIM(k,esc(alt))}</button>`:'<span class="thumb none"></span>'}
 function row(id,text,k,climb,sub){
+  const n=Number(id.slice(1,id.indexOf('-')));
+  if(isRemoved(n,id)) return '';
   const on=!!STATE.done[id];
+  if(editing) return `<li class="check edit${climb?' climber':''}">${pic(k,text)}<span class="etext">${esc(text)}</span><button type="button" class="ebtn" data-act="remove" data-id="${id}" aria-label="Remove ${esc(text)} from this day">Remove</button></li>`;
   return `<li class="check${on?' on':''}${climb?' climber':''}">${pic(k,text)}<label for="${id}"><span>${esc(text)}</span>${sub?`<small>${esc(sub)}</small>`:''}</label><input type="checkbox" id="${id}" ${on?'checked':''}></li>`;
 }
 function moves(list){return `<ul class="moves">${list.map(([t,k])=>`<li><button type="button" class="mv" data-big="${k}">${ANIM(k,"")}<span>${esc(t)}</span></button></li>`).join('')}</ul>`}
@@ -339,58 +363,44 @@ function render(){
   <header style="display:grid;gap:10px">
     <div class="eyebrow">California Gym JDM · 6 Oct to 4 Nov 2026</div>
     <h1>Ascent</h1>
-    <p class="lede">Your daily climb. Training built to reshape: lower body twice a week, upper body for posture only, fat loss for the waist. Day 1 is done. Phase 1 is days 1 to 15, phase 2 runs to 4 November, the day before Paris. Gym at 9:00 with more stair climber each week, the Chloe Ting 2024 Weight Loss Challenge at home every afternoon, its rest days on Sunday and Monday.</p>
+    <p class="lede">Your daily climb.</p>
     <div class="meter"><div class="bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><b>${daysDone + 1}/${DAYS.length + 1} days</b>${(()=>{const t=new Date(2026,10,7)-new Date(new Date().toDateString());const n=Math.round(t/864e5);return n>0?`<span class="tag time">Wedding in ${n} days</span>`:""})()}<span class="save" id="save">${esc(SYNC.status)}</span></div>
     ${SYNC.pass?'':`<form class="sync" id="syncform"><label for="syncpass">Sync passphrase</label><input id="syncpass" type="password" autocomplete="current-password" placeholder="Same on every device"><button type="submit">Connect</button></form>`}
   </header>
   ${stripHTML()}
   <section class="card" aria-live="polite">
-    <div class="dayhead"><div><div class="eyebrow">${d.n>15?'Phase 2':'Phase 1'} · Day ${d.n} · ${esc(d.date)}</div><h2>${esc(d.kind==='Rest'?'Full rest':d.kind==='Recovery'?'Active recovery':d.kind==='Class'?'Class + cardio':d.kind==='Home'?'Home session':d.kind==='Gym + home'?'Gym + home':'Gym session')}</h2></div>
-      <div class="tags">${d.time!=='none'?`<span class="tag time">Go at ${esc(d.time)}</span>`:''}${d.tags.map(t=>`<span class="tag${/limber/.test(t)?' climb':''}">${esc(t)}</span>`).join('')}</div></div>
-    ${d.note?`<p class="note">${esc(d.note)}</p>`:''}
+    <div class="dayhead"><div><div class="eyebrow">${d.n>15?'Phase 2':'Phase 1'} · Day ${d.n} · ${esc(d.date)}</div><h2>${ED(d.n).title?esc(ED(d.n).title):esc(d.kind==='Rest'?'Full rest':d.kind==='Recovery'?'Active recovery':d.kind==='Class'?'Class + cardio':d.kind==='Home'?'Home session':d.kind==='Gym + home'?'Gym + home':d.kind==='Hike'?'Hike':'Gym session')}</h2></div><button type="button" class="ebtn ebtn-main" data-act="toggle">${editing?'Done':'Edit day'}</button>
+      <div class="tags">${(()=>{const E=ED(d.n),tm=E.time!==undefined?E.time:d.time;return tm&&tm!=='none'?`<span class="tag time">Go at ${esc(tm)}</span>`:''})()}${(ED(d.n).tags||d.tags).map(t=>`<span class="tag${/limber/.test(t)?' climb':''}">${esc(t)}</span>`).join('')}</div></div>
+    ${editing?(()=>{const E=ED(d.n);const rem=(E.removed||[]);return `<div class="block editor"><h3>Edit this day</h3>
+      <label class="lbl" for="e-title">Title</label><input id="e-title" data-edit="title" type="text" maxlength="60" placeholder="For example: Rainy day, gym instead" value="${esc(E.title||'')}">
+      <div class="erow"><div><label class="lbl" for="e-time">Time</label><input id="e-time" data-edit="time" type="text" maxlength="20" placeholder="${esc(d.time)}" value="${esc(E.time!==undefined?E.time:'')}"></div>
+      <div><label class="lbl" for="e-tags">Tags, comma separated</label><input id="e-tags" data-edit="tags" type="text" maxlength="200" placeholder="${esc(d.tags.join(', '))}" value="${esc((E.tags||[]).join(', '))}"></div></div>
+      <label class="lbl" for="e-add">Add an exercise or activity</label><div class="eadd"><input id="e-add" type="text" maxlength="120" placeholder="For example: Stair climber 20 min, level 4"><button type="button" class="ebtn ebtn-main" data-act="add">Add</button></div>
+      ${rem.length?`<p class="lbl">Removed today</p><ul class="rem">${rem.map(id=>`<li><span>${esc(labelOf(d,id))}</span><button type="button" class="ebtn" data-act="restore" data-id="${id}">Restore</button></li>`).join('')}</ul>`:''}
+      <button type="button" class="ebtn" data-act="reset">Reset this day to the plan</button>
+    </div>`})():''}
+    ${(!editing&&(ED(d.n).title||ED(d.n).removed||ED(d.n).added))?'<p class="foot">Changed by you. Tap Edit day to adjust or reset.</p>':''}
+    ${d.note&&!ED(d.n).title?`<p class="note">${esc(d.note)}</p>`:''}
     ${(()=>{const L=STATE.log[d.n]||{};const st=L.steps||0;const pct=Math.min(100,Math.round(st/GOAL()*100));return `<div class="block mylog"><h3>My day</h3>
       <div class="steps"><label for="steps-${d.n}">Steps</label><input id="steps-${d.n}" data-log="steps" type="number" inputmode="numeric" min="0" max="100000" step="100" placeholder="0" value="${st||''}"><div class="sbar" aria-hidden="true"><i style="width:${pct}%"></i></div><span class="sgoal" id="sgoal-${d.n}">${goalTxt(st)}</span></div>
       <div class="sline"><span id="avg-${d.n}">${avgTxt(d.n)}</span><label class="goalset">Daily goal <input id="goal" data-log="goal" type="number" inputmode="numeric" min="1000" max="40000" step="500" value="${GOAL()}"></label></div>
+      <div class="targets"><h4>Daily targets</h4>
+        <div class="nums"><label>Weight <input id="w-${d.n}" data-log="weight" type="number" inputmode="decimal" step="0.1" min="30" max="200" placeholder="kg" value="${L.weight||''}"></label><label>Waist <input id="wa-${d.n}" data-log="waist" type="number" inputmode="decimal" step="0.5" min="40" max="200" placeholder="cm" value="${L.waist||''}"></label><label>Bike breaks <input id="bk-${d.n}" data-log="bike" type="number" inputmode="numeric" min="0" max="20" placeholder="0" value="${L.bike||''}"> <span class="of">of 6, easy pace</span></label></div>
+        <p class="foot" id="wavg-${d.n}">${(()=>{const w=wavg(d.n,'weight'),wa=wavg(d.n,'waist');return w||wa?`7-day average: ${w?'<b>'+w+' kg</b>':''}${w&&wa?' · ':''}${wa?'<b>'+wa+' cm</b>':''}`:'Weigh in each morning; judge by the 7-day average.'})()}</p>
+        <ul class="tlist">${TARGETS.map(([k,lab])=>`<li><label><input type="checkbox" id="t-${k}-${d.n}" data-log="t" data-k="${k}" ${L.t&&L.t[k]?'checked':''}><span>${lab}</span></label></li>`).join('')}</ul></div>
       <div class="food"><h4>What I ate</h4>${MEALS.map(([k,lab])=>`<label class="meal"><span>${lab}</span><input id="food-${k}-${d.n}" data-log="food" data-meal="${k}" type="text" maxlength="300" placeholder="What and how much" value="${esc((L.food&&L.food[k])||'')}"></label>`).join('')}</div>
       <label class="lbl" for="note-${d.n}">What I did</label>
       <textarea id="note-${d.n}" data-log="note" rows="3" maxlength="1000" placeholder="For example: 10k steps and the treadmill only, skipped Chloe Ting">${esc(L.note||'')}</textarea>
       <label class="done-own"><input type="checkbox" id="complete-${d.n}" data-log="complete" ${L.complete?'checked':''}><span>Count this day as complete</span></label>
       ${planDone(d)?'<p class="foot">Full plan done today.</p>':(L.complete?'<p class="foot">Counted as complete, your way.</p>':'')}
     </div>`})()}
-    ${d.noWarm?'':(()=>{const leg=d.tags.some(t=>/^Legs/.test(t));return `<div class="block"><h3>Before · ${leg?'hip mobility warm-up':'dynamic warm-up'}</h3><ul class="list">${row('d'+d.n+'-warm',leg?'Hip mobility warm-up, 6 to 7 min (Jessica Bickling)':'Dynamic warm-up, 5 to 6 min','',false,leg?'Loosens hips tight from sitting so the glutes work better. 20 to 30 s or a few reps each.':'Keep moving, no holding positions')}</ul>${moves(leg?MOB:WARM)}</div>`})()}
-    <div class="block"><h3>Main work</h3><ul class="list">${d.main.map((m,i)=>row('d'+d.n+'-m'+i,m[0],m[1],m[2],m[3])).join('')}</ul></div>
-    ${d.noCool?'':`<div class="block"><h3>After · static stretching</h3><ul class="list">${row('d'+d.n+'-cool','Static stretches, 30 s each side','',false,'Mild tension, slow breathing, no bouncing')}</ul>${moves(COOL)}</div>`}
-    ${d.pm?`<div class="block pm"><h3>${esc(d.pm.label||'Optional second visit')} · ${esc(d.pm.time)}</h3><ul class="list">${d.pm.items.map((m,i)=>row('d'+d.n+'-p'+i,m[0],m[1],m[2],m[3])).join('')}</ul><p class="note">${d.pm.core?'Cast it from your phone and follow along on your mat. Your morning warm-up covers you, just add the stretches after if the video ends without them.':'Easy effort only. Skip it on days you feel tired; it does not count against the day.'}</p></div>`:''}
+    ${d.noWarm||isRemoved(d.n,'d'+d.n+'-warm')?'':(()=>{const leg=d.tags.some(t=>/^Legs/.test(t));return `<div class="block"><h3>Before · ${leg?'hip mobility warm-up':'dynamic warm-up'}</h3><ul class="list">${row('d'+d.n+'-warm',leg?'Hip mobility warm-up, 6 to 7 min (Jessica Bickling)':'Dynamic warm-up, 5 to 6 min','',false,leg?'Loosens hips tight from sitting so the glutes work better. 20 to 30 s or a few reps each.':'Keep moving, no holding positions')}</ul>${moves(leg?MOB:WARM)}</div>`})()}
+    ${(()=>{const rows=d.main.map((m,i)=>row('d'+d.n+'-m'+i,m[0],m[1],m[2],m[3])).join('')+(ED(d.n).added||[]).map(a=>editing?`<li class="check edit"><span class="thumb none"></span><span class="etext">${esc(a.text)}</span><button type="button" class="ebtn" data-act="remove-added" data-id="${a.id}">Remove</button></li>`:row('d'+d.n+'-'+a.id,a.text,'',false,'Added by you')).join('');return rows?`<div class="block"><h3>Main work</h3><ul class="list">${rows}</ul></div>`:''})()}
+    ${d.noCool||isRemoved(d.n,'d'+d.n+'-cool')?'':`<div class="block"><h3>After · static stretching</h3><ul class="list">${row('d'+d.n+'-cool','Static stretches, 30 s each side','',false,'Mild tension, slow breathing, no bouncing')}</ul>${moves(COOL)}</div>`}
+    ${d.pm&&d.pm.items.some((_,i)=>!isRemoved(d.n,'d'+d.n+'-p'+i))?`<div class="block pm"><h3>${esc(d.pm.label||'Optional second visit')} · ${esc(d.pm.time)}</h3><ul class="list">${d.pm.items.map((m,i)=>row('d'+d.n+'-p'+i,m[0],m[1],m[2],m[3])).join('')}</ul><p class="note">${d.pm.core?'Cast it from your phone and follow along on your mat. Your morning warm-up covers you, just add the stretches after if the video ends without them.':'Easy effort only. Skip it on days you feel tired; it does not count against the day.'}</p></div>`:''}
+  ${d.eve&&d.eve.some((_,i)=>!isRemoved(d.n,'d'+d.n+'-e'+i))?`<div class="block pm"><h3>Evening · 19:00</h3><ul class="list">${d.eve.map((m,i)=>row('d'+d.n+'-e'+i,m[0],m[1],m[2],m[3])).join('')}</ul></div>`:''}
   </section>
-  <div class="grid2">
-    <section class="panel"><h3>When to go</h3>
-      <p class="note">Your gym slot is 9:00 to 10:00, fairly quiet on weekdays and well away from the 17:30 to 20:30 rush. Home sessions sit at 16:00, after your nap.</p>
-      <div><div class="hours">${[...Array(15)].map((_,i)=>{const h=7+i;const c=(h>=17&&h<=20)?'busy':(h===7||h===8||h===12||h===13||h===16)?'mid':'';return `<span class="${c}" title="${h}:00"></span>`}).join('')}</div>
-      <div class="hlab"><span>07</span><span>10</span><span>13</span><span>16</span><span>19</span><span>21</span></div></div>
-      <p class="foot">Dark red: rush hours. Light red: busier. Green: quiet. Typical pattern, not measured at this gym.</p>
-    </section>
-    <section class="panel"><h3>Rules for these 15 days</h3>
-      <ul><li>Talk test: full sentences, but you couldn't sing.</li><li>Legs: from week 2, the last 2 reps of the main lifts should feel close to failure. Upper body stays moderate.</li><li>Climber: if your heart races or knees hurt, drop a level, never push through.</li><li>Two bad nights or heavy legs two days in a row: drop that day's gym, keep Chloe Ting.</li><li>Stop and rest if you feel dizzy or chest discomfort.</li></ul>
-    </section>
-    <section class="panel"><h3>Shape strategy</h3><ul><li>Build lower body much more than upper: legs twice a week, upper body only for posture (Amanda).</li><li>Outer quad and lower glute fill below the hip dip, glute medius fills above it.</li><li>Leg press foot position matters: narrow for outer quad, wide and high for glutes (rigiiko).</li><li>Hip mobility before leg days, since sitting tightens the hips (Jessica Bickling).</li><li>Deep core for the waist: dead bugs, vacuums. No direct arm work.</li></ul></section>
-    <section class="panel"><h3>Wedding week, 3 to 7 Nov</h3><ul><li>Lower salt from the 3rd: cook at home, skip processed and restaurant food where you can.</li><li>Keep drinking plenty of water. Less water makes you hold more, not less.</li><li>Don't cut carbs or eat much less in the last days. You'd look flat and tired.</li><li>No new foods or supplements that week.</li><li>Protect sleep, especially the two nights before.</li></ul></section>
-  </div>
-  <div class="grid2">
-  <section class="panel"><h3>Home: Chloe Ting Weight Loss 2024</h3>
-    <p class="note">25 days, no equipment, no jumping, low-impact versions of every move. Program days 1 to 10 fall in this phase. Its two rest days line up with your hike on Sunday and full rest on Monday.</p>
-    <p class="foot">Program page: chloeting.com/program/2024/weight-loss-challenge</p>
-  </section>
-  <section class="panel"><h3>Classes for next month</h3>
-    <div class="tbl"><table><thead><tr><th>Day</th><th>Time</th><th>Class</th></tr></thead><tbody>
-    <tr><td>Tue</td><td>09:00</td><td>Pilates (Souha)</td></tr>
-    <tr><td>Thu</td><td>09:00</td><td>Les Mills Pilates (Eya)</td></tr>
-    <tr><td>Sat</td><td>10:00</td><td>Les Mills Pilates (Eya)</td></tr>
-    <tr><td>Sat</td><td>11:00</td><td>Danse orientale (Asmahane)</td></tr>
-    </tbody></table></div>
-    <p class="foot">All in quiet hours. Sprint, 10X, Cross Training and TRX can wait until after this phase.</p>
-  </section>
-  </div>
-  <p class="foot">Tap a day to open it, tick items as you go. A day turns green when all its main items are done. Tap any picture to see it bigger. Some photos show the closest available version of the move. Pictures: free-exercise-db (public domain).</p>
+
   </div><div class="lb" id="lb" hidden><figure><span id="lbimg" class="lbanim"></span><figcaption id="lbcap"></figcaption></figure><button type="button" class="lbx" id="lbx">Close</button></div>`;
   document.getElementById('root').innerHTML=html;
 }
@@ -422,14 +432,32 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('[data-big]');
   if(b){const k=b.dataset.big;const lb=document.getElementById('lb');document.getElementById('lbimg').innerHTML=ANIM(k,'');document.getElementById('lbcap').textContent=b.textContent.trim()||b.getAttribute('aria-label').replace('Enlarge picture: ','');lb.hidden=false;return}
   if(e.target.closest('#lb')){document.getElementById('lb').hidden=true;return}
+  const act=e.target.closest('[data-act]');
+  if(act){const a=act.dataset.act,d=DAYS.find(x=>x.n===sel);
+    if(a==='toggle'){editing=!editing;cleanEdit(sel);render();if(!editing)commit();return}
+    const E=EDW(sel);
+    if(a==='remove'){E.removed=[...new Set([...(E.removed||[]),act.dataset.id])];delete STATE.done[act.dataset.id];}
+    if(a==='restore'){E.removed=(E.removed||[]).filter(x=>x!==act.dataset.id);}
+    if(a==='remove-added'){E.added=(E.added||[]).filter(x=>x.id!==act.dataset.id);delete STATE.done['d'+sel+'-'+act.dataset.id];}
+    if(a==='add'){const inp=document.getElementById('e-add'),v=(inp.value||'').trim().slice(0,120);if(!v)return;E.seq=(E.seq||0)+1;E.added=[...(E.added||[]),{id:'a'+E.seq,text:v}];}
+    if(a==='reset'){const L=STATE.log[sel];if(L){(L.edit&&L.edit.added||[]).forEach(x=>delete STATE.done['d'+sel+'-'+x.id]);delete L.edit;}}
+    cleanEdit(sel);render();commit();if(a==='add'){const i=document.getElementById('e-add');if(i)i.focus();}return}
   const c=e.target.closest('.chip');
-  if(c){sel=Number(c.dataset.day);ls(false,String(sel));render();return}
+  if(c){sel=Number(c.dataset.day);editing=false;render();centerChip();return}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const lb=document.getElementById('lb');if(lb)lb.hidden=true}});
 function stripHTML(){return `<nav class="strip" aria-label="Days">${DAYS.map(x=>(x.n===16?'<span class="sep">Phase 2</span>':x.n===2?'<span class="sep">Phase 1</span>':'')+`<button class="chip${dayDone(x)?' full':''}" data-day="${x.n}" aria-pressed="${x.n===sel}"><span class="k">${esc(x.kind)}</span><span class="n">${x.n}</span><span class="d">${esc(x.date.replace(/ Oct$/,''))}</span>${STATE.log[x.n]&&STATE.log[x.n].steps?`<span class="st${STATE.log[x.n].steps>=GOAL()?' hit':''}">${kfmt(STATE.log[x.n].steps)}</span>`:''}</button>`).join('')}</nav>`;}
+function centerChip(){const n=document.querySelector('.strip'),c=n&&n.querySelector('.chip[aria-pressed="true"]');if(n&&c)n.scrollLeft=c.offsetLeft-n.offsetLeft-(n.clientWidth-c.clientWidth)/2;}
 function refreshChips(){const n=document.querySelector('.strip');if(n){const x=n.scrollLeft;n.outerHTML=stripHTML();const m=document.querySelector('.strip');if(m)m.scrollLeft=x;}return;document.querySelectorAll('.chip').forEach(c=>{const d=DAYS.find(x=>x.n===Number(c.dataset.day));c.classList.toggle('full',dayDone(d));});}
 let logTimer=null;
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='e-add'){e.preventDefault();const b=document.querySelector('[data-act="add"]');if(b)b.click();}});
 document.addEventListener('input',e=>{
+  const f=e.target.dataset&&e.target.dataset.edit;
+  if(f){const E=EDW(sel),v=e.target.value;
+    if(f==='title')E.title=v.slice(0,60);
+    if(f==='time')E.time=v.slice(0,20);
+    if(f==='tags'){const t=v.split(',').map(x=>x.trim()).filter(Boolean).slice(0,8).map(x=>x.slice(0,30));if(t.length)E.tags=t;else delete E.tags;}
+    saveLocal();clearTimeout(logTimer);logTimer=setTimeout(push,800);return}
   const t=e.target,k=t.dataset&&t.dataset.log;if(!k||k==='complete')return;
   const L=LOG(sel);
   if(k==='steps'){const v=Math.max(0,Math.min(100000,parseInt(t.value,10)||0));if(v)L.steps=v;else delete L.steps;
@@ -437,6 +465,8 @@ document.addEventListener('input',e=>{
     const g=document.getElementById('sgoal-'+sel);if(g)g.textContent=goalTxt(v);
     const a=document.getElementById('avg-'+sel);if(a)a.innerHTML=avgTxt(sel);}
   if(k==='goal'){const v=parseInt(t.value,10);if(!(v>=1000&&v<=40000))return;STATE.settings.stepGoal=v;const st=(STATE.log[sel]&&STATE.log[sel].steps)||0;const g=document.getElementById('sgoal-'+sel);if(g)g.textContent=goalTxt(st);const bar=document.querySelector('.sbar i');if(bar)bar.style.width=Math.min(100,Math.round(st/v*100))+'%';}
+  if(k==='weight'||k==='waist'){const v=parseFloat(t.value);if(v>=30&&v<=200)L[k]=Math.round(v*10)/10;else delete L[k];const p=document.getElementById('wavg-'+sel);if(p){const w=wavg(sel,'weight'),wa=wavg(sel,'waist');p.innerHTML=w||wa?`7-day average: ${w?'<b>'+w+' kg</b>':''}${w&&wa?' · ':''}${wa?'<b>'+wa+' cm</b>':''}`:'Weigh in each morning; judge by the 7-day average.';}}
+  if(k==='bike'){const v=parseInt(t.value,10);if(v>0&&v<=20)L.bike=v;else delete L.bike;}
   if(k==='food'){const m=t.dataset.meal,v=t.value.slice(0,300);L.food=L.food||{};if(v.trim())L.food[m]=v;else delete L.food[m];if(!Object.keys(L.food).length)delete L.food;}
   if(k==='note'){const v=t.value.slice(0,1000);if(v.trim())L.note=v;else delete L.note;}
   refreshChips();saveLocal();clearTimeout(logTimer);logTimer=setTimeout(push,600);
@@ -444,6 +474,7 @@ document.addEventListener('input',e=>{
 document.addEventListener('change',e=>{
   const t=e.target;
   if(t.dataset&&t.dataset.log==='complete'){const L=LOG(sel);if(t.checked)L.complete=true;else delete L.complete;render();saveLocal();push();return;}
+  if(t.dataset&&t.dataset.log==='t'){const L=LOG(sel);L.t=L.t||{};if(t.checked)L.t[t.dataset.k]=true;else delete L.t[t.dataset.k];if(!Object.keys(L.t).length)delete L.t;saveLocal();push();return;}
   if(t.dataset&&t.dataset.log)return;
   if(t.type!=='checkbox')return;
   if(t.checked)STATE.done[t.id]=true;else delete STATE.done[t.id];
@@ -451,6 +482,7 @@ document.addEventListener('change',e=>{
 });
 
 render();
+centerChip();
 pull();
 if(window.claude&&window.claude.use){
   window.claude.use('artifact').then(a=>{artifact=a;canSave=!!a;if(!a)setSave('Ticks are not saved in this view')}).catch(()=>{canSave=false});
