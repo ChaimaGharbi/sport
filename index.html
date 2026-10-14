@@ -249,6 +249,7 @@ const HOME = (n,hip) => ({time:"16:00",label:"Chloe Ting at home",core:true,item
 const Z2 = ["Zone 2 bike, 60 min","",false,"Around 19:00, before dinner. You can talk in full sentences, about 120 to 140 bpm. Finish 90 min before bed."];
 const OFFSET = 9; const disp = n => n - OFFSET;
 const CORE = ["Core: dead bug 2 x 10 per side","deadbug",false,"Deep core for a flatter stomach."];
+const NECK = [["Chin tucks against the wall, 2 x 10, hold 5 s","",false,"Back of the head, upper back and hips against a wall. Slide the chin straight back, like making a double chin. Reverses forward head posture from the laptop."],["Wall angels, 2 x 10","",false,"Back flat on the wall, arms in a W, slide up to a Y and back down slowly. Opens the upper back."]];
 const VAC = ["Stomach vacuum, 3 x 20 s","vacuum",false,"End of every session. Breathe out fully, pull the belly button to the spine, hold while breathing shallowly. Trains the deep muscle that holds the waist in."];
 const WALK = m => ({time:"16:00",label:"Afternoon",core:true,items:[["Walk "+m+" min, easy pace","",false,"Chloe Ting rest day in the program."]]});
 const DAYS = [
@@ -295,7 +296,7 @@ const DAYS = [
   note:"From today to the 6th: low-fiber, low-salt meals (eggs, chicken, fish, a little white rice, cooked vegetables). Keep drinking water. Moderate carbs the evening before the wedding.",
   main:[TM(25,10,"5.0"),SC(10,"35","Easy.")],pm:HOME(16),eve:[Z2]}
 ];
-DAYS.forEach(d=>{ if(d.main) d.main.push(VAC); });
+DAYS.forEach(d=>{ if(d.main) d.main.push(...NECK, VAC); });
 
 const KEY='reboot15-day';
 function ls(get,v){try{return get?localStorage.getItem(KEY):localStorage.setItem(KEY,v)}catch(e){return null}}
