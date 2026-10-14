@@ -67,6 +67,15 @@ h3{font-size:1.25rem;text-transform:uppercase;letter-spacing:.06em;color:var(--m
 .check small{display:block;color:var(--muted);font-size:.85rem}
 .check.on{background:var(--done-soft);border-color:transparent}
 .check.on label>span{text-decoration:line-through;text-decoration-color:var(--done)}
+.xlog{grid-column:1/-1;margin:2px 0 0}
+.xlog summary{cursor:pointer;color:var(--muted);font-size:.85rem;list-style:none}
+.xlog summary::-webkit-details-marker{display:none}
+.xlog summary b{color:var(--ink,inherit);font-weight:600}
+.xlog .sets{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 6px}
+.xlog .sets label{display:flex;flex-direction:column;font-size:.75rem;color:var(--muted)}
+.xlog .sets input{width:64px;padding:6px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:1rem}
+.xlog .mod{width:100%;box-sizing:border-box;padding:7px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:.95rem}
+.xlog .last{font-size:.8rem;color:var(--muted);margin:0 0 6px}
 .check.climber{border-left:4px solid var(--climb)}
 .thumb{width:96px;aspect-ratio:3/2;max-width:100%;padding:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;cursor:zoom-in;display:block}
 .thumb .anim{height:100%}
@@ -188,7 +197,7 @@ async function api(method,body){
 }
 async function pull(){
   if(!SYNC.pass||SYNC.busy||SYNC.timer)return;
-  try{setStatus('Syncing');const j=await api('GET');STATE.done=j.done||{};STATE.log=j.log||{};STATE.settings=j.settings||STATE.settings||{};saveLocal();if(!document.activeElement||!document.activeElement.closest('.mylog'))render();setStatus('Synced');}
+  try{setStatus('Syncing');const j=await api('GET');STATE.done=j.done||{};STATE.log=j.log||{};STATE.settings=j.settings||STATE.settings||{};saveLocal();if(!document.activeElement||!document.activeElement.closest('.mylog,.xlog'))render();setStatus('Synced');}
   catch(e){if(e.status===401){SYNC.pass=null;try{localStorage.removeItem('reboot15-pass')}catch(_){}render();setStatus('Wrong passphrase, enter it again');}else setStatus('Offline: ticks kept on this device, will sync later');}
 }
 function push(){
@@ -245,7 +254,7 @@ const MOB = [["Leg swings front to back, 10 per leg","swing"],["Knee raise and o
 const TM = (min, inc, sp) => ["Treadmill "+min+" min: "+sp+" km/h, incline "+inc+"%", "treadmill", false, "3 min flat to start, 2 min flat to finish. Don't hold the rails."];
 const SC = (min, spm, how) => ["Stair climber "+min+" min, "+spm+" steps/min", "climber", true, how+" First 2 min at 25 to 30. Adjust so you can still talk."];
 
-const CT = n => ["Chloe Ting 2024 Weight Loss Challenge, workout "+n, "", false, "Skip the warm-up video after a gym morning. Low-impact versions on strength days."];
+const CT = n => ["Chloe Ting 2024 Weight Loss Challenge, workout "+n, "", false, "Skip the warm-up video after a gym morning. Low-impact versions on strength days. Wrists first: 1 min of wrist circles and rocking on all fours. If wrists hurt, turn the hands out about 45°, or do planks on forearms and push-ups on fists. Reverse plank: knees bent (reverse tabletop) until it gets easier."];
 const HOME = (n,hip) => ({time:"16:00",label:"Chloe Ting at home",core:true,items:hip?[CT(n),...HIP]:[CT(n)]});
 const Z2 = ["Zone 2 bike, 60 min","",false,"Around 19:00, before dinner. You can talk in full sentences, about 120 to 140 bpm. Finish 90 min before bed."];
 const OFFSET = 9; const disp = n => n - OFFSET;
@@ -332,12 +341,25 @@ if(!DAYS.some(d=>d.n===sel)) sel=DAYS[0].n;
 
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function pic(k,alt){if(k&&k.startsWith('https://'))return `<a class="thumb vid" href="${k}" target="_blank" rel="noopener" aria-label="Watch video: ${esc(alt)}"><span>▶</span>Video</a>`;return IMG[k]?`<button type="button" class="thumb" data-big="${k}" aria-label="Enlarge picture: ${esc(alt)}">${ANIM(k,esc(alt))}</button>`:'<span class="thumb none"></span>'}
+const NOW_W=/^(Core|Stretch|Chin|Wall angels|Stomach|Hip finisher|Treadmill|Stair|Zone|Walk|Chloe|Hike|Static|Hip mobility|Dynamic)/i;
+const isStr=t=>/\b[1-6]\s*x\s*\d+/.test(t)&&!NOW_W.test(t);
+const nSets=t=>{const m=t.match(/\b([1-6])\s*x\s*\d+/);return m?+m[1]:3};
+const normT=t=>t.replace(/,\s*(\d\s*x\s*\d+|heavier|light).*$/i,'').trim().toLowerCase();
+const XL=(n,id)=>{const L=STATE.log[n];return (L&&L.x&&L.x[id])||{}};
+const fmtW=w=>(w||[]).filter(v=>v!=null&&v!=='').join(' · ');
+function lastW(n,text){const key=normT(text);for(let i=n-1;i>=10;i--){const d=DAYS.find(x=>x.n===i);if(!d)continue;const groups=[['m',d.main||[]],['p',(d.pm&&d.pm.items)||[]]];for(const [g,arr] of groups){for(let j=0;j<arr.length;j++){if(normT(arr[j][0])!==key)continue;const x=XL(i,'d'+i+'-'+g+j);if(x.w&&x.w.some(v=>v))return {w:x.w,day:d.date,m:x.m};}}}return null}
+const openX=new Set();
+function xsum(n,id,text){const x=XL(n,id),parts=[];if(isStr(text)&&fmtW(x.w))parts.push('<b>'+esc(fmtW(x.w))+' kg</b>');if(x.m)parts.push(esc(x.m));return parts.length?parts.join(' · '):(isStr(text)?'＋ Log weights or changes':'＋ Note a change')}
+function xlog(id,text){const n=Number(id.slice(1,id.indexOf('-')));const x=XL(n,id),str=isStr(text);let h=`<details class="xlog" data-x="${id}"${openX.has(id)?' open':''}><summary id="xs-${id}">${xsum(n,id,text)}</summary>`;
+  if(str){const last=lastW(n,text);if(last)h+=`<p class="last">Last time (${esc(last.day)}): ${esc(fmtW(last.w))} kg${last.m?' · '+esc(last.m):''}</p>`;
+    const k=Math.max(nSets(text),(x.w||[]).length);h+='<div class="sets">';for(let i=0;i<k;i++)h+=`<label>Set ${i+1}<input type="number" inputmode="decimal" step="0.5" min="0" max="500" placeholder="kg" data-log="xw" data-id="${id}" data-i="${i}" data-t="${esc(text)}" value="${x.w&&x.w[i]!=null?x.w[i]:''}"></label>`;h+='</div>';}
+  h+=`<input class="mod" type="text" maxlength="200" placeholder="What I changed (e.g. 10 reps instead of 12, knees down)" data-log="xm" data-id="${id}" data-t="${esc(text)}" value="${esc(x.m||'')}"></details>`;return h}
 function row(id,text,k,climb,sub){
   const n=Number(id.slice(1,id.indexOf('-')));
   if(isRemoved(n,id)) return '';
   const on=!!STATE.done[id];
   if(editing) return `<li class="check edit${climb?' climber':''}">${pic(k,text)}<span class="etext">${esc(text)}</span><button type="button" class="ebtn" data-act="remove" data-id="${id}" aria-label="Remove ${esc(text)} from this day">Remove</button></li>`;
-  return `<li class="check${on?' on':''}${climb?' climber':''}">${pic(k,text)}<label for="${id}"><span>${esc(text)}</span>${sub?`<small>${esc(sub)}</small>`:''}</label><input type="checkbox" id="${id}" ${on?'checked':''}></li>`;
+  return `<li class="check${on?' on':''}${climb?' climber':''}">${pic(k,text)}<label for="${id}"><span>${esc(text)}</span>${sub?`<small>${esc(sub)}</small>`:''}</label><input type="checkbox" id="${id}" ${on?'checked':''}>${xlog(id,text)}</li>`;
 }
 function moves(list){return `<ul class="moves">${list.map(([t,k])=>`<li><button type="button" class="mv" data-big="${k}">${ANIM(k,"")}<span>${esc(t)}</span></button></li>`).join('')}</ul>`}
 let canSave=null, timer=null;
@@ -456,8 +478,14 @@ document.addEventListener('input',e=>{
   if(k==='bike'){const v=parseInt(t.value,10);if(v>0&&v<=20)L.bike=v;else delete L.bike;}
   if(k==='food'){const m=t.dataset.meal,v=t.value.slice(0,300);L.food=L.food||{};if(v.trim())L.food[m]=v;else delete L.food[m];if(!Object.keys(L.food).length)delete L.food;}
   if(k==='note'){const v=t.value.slice(0,1000);if(v.trim())L.note=v;else delete L.note;}
+  if(k==='xw'||k==='xm'){const id=t.dataset.id;L.x=L.x||{};const X=L.x[id]||(L.x[id]={});
+    if(k==='xw'){const i=+t.dataset.i,v=parseFloat(t.value);X.w=X.w||[];X.w[i]=(v>=0&&v<=500)?Math.round(v*2)/2:null;while(X.w.length&&X.w[X.w.length-1]==null)X.w.pop();for(let j=0;j<X.w.length;j++)if(X.w[j]===undefined)X.w[j]=null;if(!X.w.length)delete X.w;}
+    else{const v=t.value.slice(0,200);if(v.trim())X.m=v;else delete X.m;}
+    if(!Object.keys(X).length)delete L.x[id];if(!Object.keys(L.x).length)delete L.x;
+    const sm=document.getElementById('xs-'+id);if(sm)sm.innerHTML=xsum(sel,id,t.dataset.t);}
   refreshChips();saveLocal();clearTimeout(logTimer);logTimer=setTimeout(push,600);
 });
+document.addEventListener('toggle',e=>{const d=e.target;if(d.classList&&d.classList.contains('xlog')){if(d.open)openX.add(d.dataset.x);else openX.delete(d.dataset.x);}},true);
 document.addEventListener('change',e=>{
   const t=e.target;
   if(t.dataset&&t.dataset.log==='complete'){const L=LOG(sel);if(t.checked)L.complete=true;else delete L.complete;render();saveLocal();push();return;}

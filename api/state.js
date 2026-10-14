@@ -70,6 +70,21 @@ export default async function handler(req, res) {
           if (Number.isInteger(x.seq) && x.seq > 0 && x.seq < 1e6) ed.seq = x.seq;
           if (Object.keys(ed).some((k) => k !== "seq")) e.edit = ed;
         }
+        if (v.x && typeof v.x === "object" && !Array.isArray(v.x)) {
+          const xs = {};
+          for (const [id, it] of Object.entries(v.x).slice(0, 80)) {
+            if (!/^d\d{1,2}-[a-z]+\d*$/.test(id) || !it || typeof it !== "object") continue;
+            const o = {};
+            if (Array.isArray(it.w)) {
+              const w = it.w.slice(0, 8).map((n) => (n === null || n === "" || !(Number(n) >= 0 && Number(n) <= 500) ? null : Math.round(Number(n) * 2) / 2));
+              while (w.length && w[w.length - 1] === null) w.pop();
+              if (w.length) o.w = w;
+            }
+            if (typeof it.m === "string" && it.m.trim()) o.m = it.m.slice(0, 200);
+            if (Object.keys(o).length) xs[id] = o;
+          }
+          if (Object.keys(xs).length) e.x = xs;
+        }
         if (v.food && typeof v.food === "object") {
           const f = {};
           for (const m of ["b", "l", "s", "d"]) if (typeof v.food[m] === "string" && v.food[m].trim()) f[m] = v.food[m].slice(0, 300);
