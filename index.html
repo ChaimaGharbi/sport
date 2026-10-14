@@ -70,6 +70,7 @@ h3{font-size:1.25rem;text-transform:uppercase;letter-spacing:.06em;color:var(--m
 .check.climber{border-left:4px solid var(--climb)}
 .thumb{width:96px;aspect-ratio:3/2;max-width:100%;padding:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;cursor:zoom-in;display:block}
 .thumb .anim{height:100%}
+.thumb.vid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#c4302b;font:600 13px/1 system-ui,sans-serif;cursor:pointer}.thumb.vid span{font-size:22px}
 .thumb.none{background:var(--bg);cursor:default;border-style:dashed}
 .moves{list-style:none;margin:0;padding:0 0 4px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
 .mv{width:100%;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);color:var(--ink);font:inherit;font-size:.85rem;text-align:left;cursor:zoom-in;display:grid}
@@ -230,7 +231,7 @@ const SB = s => [
 const UP = s => [
   ["Posture: face pull, 3 x 15, light","facepull",false,"Rope at forehead height, pull to the eyes, elbows high. Light weight, never heavy. Opens the chest and shows the collarbones."],
   ["Posture: band pull-apart, 2 x 15","pullapart",false,"Arms straight at shoulder height, squeeze the shoulder blades together. A light band or the lightest cable."],
-  ["Posture: prone Y-raise, 2 x 12, 1 to 2 kg or no weight","",false,"Lie face down on an incline bench, thumbs up, raise the arms in a Y. Works the lower traps that pull the shoulders down, for a longer neck."],
+  ["Posture: prone Y-raise, 2 x 12, 1 to 2 kg or no weight","https://www.youtube.com/watch?v=U7Pdw5wFGh0",false,"Lie face down on an incline bench, thumbs up, raise the arms in a Y. Works the lower traps that pull the shoulders down, for a longer neck."],
   ["Arms: rope triceps pushdown, 2 x 15, light","tripush",false,"Elbows pinned to your sides, squeeze at the bottom. Light weight and high reps for definition, not size."],
   ["Stretch: child's pose, walk the hands to each side, 30 s per side","child",false,"Stretches the lats. Tight lats pull the shoulders forward and round the back."]
 ];
@@ -249,7 +250,7 @@ const HOME = (n,hip) => ({time:"16:00",label:"Chloe Ting at home",core:true,item
 const Z2 = ["Zone 2 bike, 60 min","",false,"Around 19:00, before dinner. You can talk in full sentences, about 120 to 140 bpm. Finish 90 min before bed."];
 const OFFSET = 9; const disp = n => n - OFFSET;
 const CORE = ["Core: dead bug 2 x 10 per side","deadbug",false,"Deep core for a flatter stomach."];
-const NECK = [["Chin tucks against the wall, 2 x 10, hold 5 s","",false,"Back of the head, upper back and hips against a wall. Slide the chin straight back, like making a double chin. Reverses forward head posture from the laptop."],["Wall angels, 2 x 10","",false,"Back flat on the wall, arms in a W, slide up to a Y and back down slowly. Opens the upper back."]];
+const NECK = [["Chin tucks against the wall, 2 x 10, hold 5 s","https://www.youtube.com/watch?v=gIBoxQ6AlS0",false,"Back of the head, upper back and hips against a wall. Slide the chin straight back, like making a double chin. Reverses forward head posture from the laptop."],["Wall angels, 2 x 10","https://www.youtube.com/watch?v=1UU4VvklQ44",false,"Back flat on the wall, arms in a W, slide up to a Y and back down slowly. Opens the upper back."]];
 const VAC = ["Stomach vacuum, 3 x 20 s","vacuum",false,"End of every session. Breathe out fully, pull the belly button to the spine, hold while breathing shallowly. Trains the deep muscle that holds the waist in."];
 const WALK = m => ({time:"16:00",label:"Afternoon",core:true,items:[["Walk "+m+" min, easy pace","",false,"Chloe Ting rest day in the program."]]});
 const DAYS = [
@@ -330,7 +331,7 @@ let sel = (DAYS.find(d=>isoOf(d.n)>=todayIso)||DAYS[DAYS.length-1]).n;
 if(!DAYS.some(d=>d.n===sel)) sel=DAYS[0].n;
 
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function pic(k,alt){return IMG[k]?`<button type="button" class="thumb" data-big="${k}" aria-label="Enlarge picture: ${esc(alt)}">${ANIM(k,esc(alt))}</button>`:'<span class="thumb none"></span>'}
+function pic(k,alt){if(k&&k.startsWith('https://'))return `<a class="thumb vid" href="${k}" target="_blank" rel="noopener" aria-label="Watch video: ${esc(alt)}"><span>▶</span>Video</a>`;return IMG[k]?`<button type="button" class="thumb" data-big="${k}" aria-label="Enlarge picture: ${esc(alt)}">${ANIM(k,esc(alt))}</button>`:'<span class="thumb none"></span>'}
 function row(id,text,k,climb,sub){
   const n=Number(id.slice(1,id.indexOf('-')));
   if(isRemoved(n,id)) return '';
