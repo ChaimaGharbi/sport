@@ -1,5 +1,5 @@
 // Ascent service worker: the app opens offline, updates arrive when online.
-const CACHE = "ascent-v24";
+const CACHE = "ascent-v26";
 const SHELL = ["/", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (e) => {

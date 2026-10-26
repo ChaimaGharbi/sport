@@ -259,7 +259,7 @@ const MOB = [["Leg swings front to back, 10 per leg","swing"],["Knee raise and o
 const TM = (min, inc, sp) => ["Treadmill "+min+" min: "+sp+" km/h, incline "+inc+"%", "treadmill", false, "3 min flat to start, 2 min flat to finish. Don't hold the rails."];
 const SC = (min, spm, how) => ["Stair climber "+min+" min, "+spm+" steps/min", "climber", true, how+" First 2 min at 25 to 30. Adjust so you can still talk."];
 
-const CT = n => ["Chloe Ting 2024 Weight Loss Challenge, workout "+n, "", false, "Skip the warm-up video after a gym morning. Low-impact versions on strength days. Wrists first: 1 min of wrist circles and rocking on all fours. If wrists hurt, turn the hands out about 45°, or do planks on forearms and push-ups on fists. Reverse plank: knees bent (reverse tabletop) until it gets easier."];
+const CT = n => ["Chloe Ting 2024 Weight Loss Challenge, workout "+n, "", false, "Do it right after you get home from the gym, before you shower: one sweat, one shower. Skip the warm-up video after a gym morning. Low-impact versions on strength days. Wrists first: 1 min of wrist circles and rocking on all fours. If wrists hurt, turn the hands out about 45°, or do planks on forearms and push-ups on fists. Reverse plank: knees bent (reverse tabletop) until it gets easier."];
 const HOME = (n,hip) => ({time:"16:00",label:"Chloe Ting at home",core:true,items:hip?[CT(n),...HIP]:[CT(n)]});
 const Z2 = ["Zone 2 bike, 60 min","",false,"Around 19:00, before dinner. You can talk in full sentences, about 120 to 140 bpm. Finish 90 min before bed."];
 const OFFSET = 9; const disp = n => n - OFFSET;
@@ -342,29 +342,29 @@ const DAYS = [
  {n:22,date:"Mon 26 Oct",kind:"Gym + home",time:"09:00",tags:["Lower A: quads","New split","CT rest day"],
   note:"New split starts today. Use the hack or pendulum squat if the gym has one, otherwise the heel-elevated goblet squat.",
   main:[TM(10,8,"5.0"),...LA(false)],pm:WALK(30),eve:[Z2]},
- {n:23,date:"Tue 27 Oct",kind:"Gym + home",time:"09:00",tags:["Upper A + core","CT rest day"],
-  main:[SC(15,"40","Steady."),...UA(false)],pm:WALK(30),eve:[Z2]},
- {n:24,date:"Wed 28 Oct",kind:"Gym + home",time:"09:00",tags:["Walk-run","Lower B: glutes","Chloe Ting 11"],
-  main:[RUN(2,2,5,"Run first, then glutes."),...LB(false)],pm:HOME(11),eve:[Z2]},
- {n:25,date:"Thu 29 Oct",kind:"Gym + home",time:"09:00",tags:["Recovery","Chloe Ting 12"],
+ {n:23,date:"Tue 27 Oct",kind:"Gym + home",time:"09:00",tags:["Upper A + core","Chloe Ting 8"],
+  main:[SC(15,"40","Steady."),...UA(false)],pm:HOME(8),eve:[Z2]},
+ {n:24,date:"Wed 28 Oct",kind:"Gym + home",time:"09:00",tags:["Walk-run","Lower B: glutes","CT rest day"],
+  main:[RUN(2,2,5,"Run first, then glutes."),...LB(false)],pm:WALK(30),eve:[Z2]},
+ {n:25,date:"Thu 29 Oct",kind:"Gym + home",time:"09:00",tags:["Recovery","Chloe Ting 9"],
   note:"No strength today. Easy movement only.",
-  main:[EASY(30),MOBI],pm:HOME(12),eve:[Z2]},
- {n:26,date:"Fri 30 Oct",kind:"Gym + home",time:"09:00",tags:["Walk-run","Upper B","Chloe Ting 13"],
-  main:[RUN(2,2,5,"Run first, then upper body."),...UB],pm:HOME(13),eve:[Z2]},
- {n:27,date:"Sat 31 Oct",kind:"Home",time:"any",tags:["Rest day","Chloe Ting 14"],
+  main:[EASY(30),MOBI],pm:HOME(9),eve:[Z2]},
+ {n:26,date:"Fri 30 Oct",kind:"Gym + home",time:"09:00",tags:["Walk-run","Upper B","Chloe Ting 10"],
+  main:[RUN(2,2,5,"Run first, then upper body."),...UB],pm:HOME(10),eve:[Z2]},
+ {n:27,date:"Sat 31 Oct",kind:"Home",time:"any",tags:["Rest day","Chloe Ting 11"],
   note:"No legs today: Sunday run tomorrow.",
-  main:[["Walk 45 to 60 min, easy","",false,"Outside if the weather is nice."],MOBI],pm:HOME(14,true),eve:[Z2]},
- {n:28,date:"Sun 1 Nov",kind:"Gym + home",time:"10:00",tags:["Walk-run","Sunday run","Chloe Ting 15"],
-  main:[RUN(2,2,5,"Walk breaks at 5% incline. On a trail instead: same time, walk the steep downhills."),CORE],pm:HOME(15,true),eve:[Z2]},
+  main:[["Walk 45 to 60 min, easy","",false,"Outside if the weather is nice."],MOBI],pm:HOME(11),eve:[Z2]},
+ {n:28,date:"Sun 1 Nov",kind:"Gym + home",time:"10:00",tags:["Walk-run","Sunday run","CT rest day"],
+  main:[RUN(2,2,5,"Walk breaks at 5% incline. On a trail instead: same time, walk the steep downhills."),CORE],pm:WALK(30),eve:[Z2]},
  {n:29,date:"Mon 2 Nov",kind:"Gym + home",time:"09:00",tags:["Lower A: quads","Wedding week","Lighter","CT rest day"],
   note:"Wedding in 5 days: 2 sets each, stop 2 to 3 reps before failure, no burnout. You want to be fresh, not sore.",
   main:[TM(10,8,"5.0"),...LA(true)],pm:WALK(30),eve:[Z2]},
- {n:30,date:"Tue 3 Nov",kind:"Gym + home",time:"09:00",tags:["Upper A","Wedding week","Lighter","CT rest day"],
-  note:"Wedding week: lighter so you're fresh, not sore. Fiber stays high until today.",
-  main:[SC(15,"40","Steady."),...UA(true)],pm:WALK(30),eve:[Z2]},
- {n:31,date:"Wed 4 Nov",kind:"Gym",time:"09:00",tags:["Walk-run","Last session","Easy","Chloe Ting 16"],
-  note:"From today to the 6th: low-fiber, low-salt meals (eggs, chicken, fish, a little white rice, cooked vegetables). Keep drinking water. Moderate carbs the evening before the wedding. No legs today.",
-  main:[RUN(2,2,5,"Easy and flat. Last run before Paris."),["Push-up test: max real push-ups, then max knee push-ups","pushup",false,"Your starting point. Write both numbers in the box, even if real push-ups is 0. Good form only: body straight, chest to the floor."],MOBI],pm:HOME(16),eve:[Z2]}
+ {n:30,date:"Tue 3 Nov",kind:"Gym + home",time:"09:00",tags:["Walk-run","Upper A","Wedding week","Lighter","Chloe Ting 12"],
+  note:"Wednesday's easy run moved here: IELTS tomorrow. Sunday to Tuesday is 48 h, enough recovery. Run first, then a light upper body session. Chloe Ting right after you get home, before you shower. Fiber stays high until today.",
+  main:[RUN(2,2,5,"Easy and flat. Last run before Paris."),["Push-up test: max real push-ups, then max knee push-ups","pushup",false,"Do it before the upper body exercises, while you're fresh. Write both numbers in the box, even if real push-ups is 0. Good form only: body straight, chest to the floor."],...UA(true)],pm:HOME(12),eve:[Z2]},
+ {n:31,date:"Wed 4 Nov",kind:"Rest",time:"none",tags:["IELTS","Rest day","CT rest day"],noWarm:true,noCool:true,
+  note:"IELTS at British Council Tunis: Speaking 09:00 (arrive 08:40), Listening, Reading and Writing 13:00 to 16:00 (arrive 12:15). Breakfast with protein before you leave. Eat lunch around 11:30, before you go back in: 3 hours with no food is a long time with your blood sugar. From today to the 6th: low-fiber, low-salt meals (eggs, chicken, fish, a little white rice, cooked vegetables). Keep drinking water. Moderate carbs the evening before the wedding.",
+  main:[["Easy walk, if you feel like it","",false,"Optional. Between the two parts of the exam or in the evening."]]}
 ];
 DAYS.forEach(d=>{ if(d.main) d.main.push(...NECK, VAC, TRAP); });
 
