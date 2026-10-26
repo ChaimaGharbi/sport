@@ -65,6 +65,7 @@ h3{font-size:1.25rem;text-transform:uppercase;letter-spacing:.06em;color:var(--m
 .check input{width:26px;height:26px;margin:0;accent-color:var(--done);cursor:pointer}
 .check label{cursor:pointer;min-width:0}
 .check small{display:block;color:var(--muted);font-size:.85rem}
+.check small.tt{color:var(--done);font-weight:600;margin-top:2px}
 .check.on{background:var(--done-soft);border-color:transparent}
 .check.on label>span{text-decoration:line-through;text-decoration-color:var(--done)}
 .xlog{grid-column:1/-1;margin:2px 0 0}
@@ -180,6 +181,9 @@ STATE.log=STATE.log||{};STATE.settings=STATE.settings||{};
 try{const saved=JSON.parse(localStorage.getItem('reboot15-done')||'null');if(saved&&typeof saved==='object')STATE.done=saved;const lg=JSON.parse(localStorage.getItem('reboot15-log')||'null');if(lg&&typeof lg==='object')STATE.log=lg;const st=JSON.parse(localStorage.getItem('reboot15-settings')||'null');if(st&&typeof st==='object')STATE.settings=st;}catch(e){}
 const saveLocal=()=>{try{localStorage.setItem('reboot15-done',JSON.stringify(STATE.done));localStorage.setItem('reboot15-log',JSON.stringify(STATE.log));localStorage.setItem('reboot15-settings',JSON.stringify(STATE.settings))}catch(e){}};
 const LOG=n=>STATE.log[n]||(STATE.log[n]={});
+const hm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const dur=m=>m<60?m+' min':Math.floor(m/60)+' h'+(m%60?' '+(m%60)+' min':'');
+function sessTxt(n){const tt=(STATE.log[n]&&STATE.log[n].tt)||{};const v=Object.entries(tt).filter(([id])=>/^d\d+-(m|warm|cool|a)/.test(id)&&STATE.done[id]).map(([,m])=>m);if(!v.length)return '';const a=Math.min(...v),b=Math.max(...v);return v.length<2?' · first tick '+hm(a):' · '+hm(a)+' to '+hm(b)+', '+dur(b-a);}
 const GOAL=()=>STATE.settings.stepGoal||12000;
 const goalTxt=v=>v>=GOAL()?'Goal reached':kfmt(Math.max(0,GOAL()-v))+' to your '+kfmt(GOAL())+' goal';
 function avg7(n){const xs=[];for(let i=n;i>n-7&&i>=10;i--){const s=STATE.log[i]&&STATE.log[i].steps;if(s)xs.push(s);}return xs.length?{v:Math.round(xs.reduce((a,b)=>a+b,0)/xs.length),n:xs.length}:null;}
@@ -269,7 +273,7 @@ const LA = light => [
   ["Leg press, feet low and narrow, "+(light?"2 x 12":"3 x 10 to 12"),"legpress",false,"Outer quad. Knees deep toward the chest, never lock them at the top."],
   ["Single-leg leg press, "+(light?"2 x 10 per leg":"2 to 3 x 10 to 12 per leg"),"legpress",false,"Foot in the middle, slightly outside the hip. Low on the platform for quad, high for glute. About 40 to 50% of the two-leg weight."],
   ["Leg extension, "+(light?"2 x 12":"3 x 12 to 15"),"legext",false,"Slow on the way down."],
-  ["Cable knee drive with ankle strap, "+(light?"2 x 12 per leg":"3 x 12 per leg"),"kneeup",false,"Low pulley, face away, drive the knee to hip height and slightly out. The area at and below the hip dip."],
+  ["Cable knee drive with ankle strap, "+(light?"2 x 12 per leg":"3 x 12 per leg"),"https://www.youtube.com/watch?v=pfPbcJJmdWE",false,"Low pulley, ankle strap, face away. Start with 2.5 to 5 kg, lower slowly, torso tall, drive the knee to hip height and slightly out. The area at and below the hip dip."],
   ["Side-lying leg raise, toes slightly down, 2 x 15 per leg","sideraise",false,"Top leg turned slightly in. Slow."],
   ...(light?[]:[["Finisher: heel-raised burnout squat, 2 x 15 to 20","burnout",false,"Log the dumbbell weight. Caroline's burnout: heels up, narrow stance, knees far forward, torso upright, light dumbbell (2 to 5 kg) behind the head. Stop 2 reps before failure, and stop if the front of the knee hurts."]]),
   CALF
@@ -415,7 +419,7 @@ function row(id,text,k,climb,sub){
   if(isRemoved(n,id)) return '';
   const on=!!STATE.done[id];
   if(editing) return `<li class="check edit${climb?' climber':''}">${pic(k,text)}<span class="etext">${esc(text)}</span><button type="button" class="ebtn" data-act="remove" data-id="${id}" aria-label="Remove ${esc(text)} from this day">Remove</button></li>`;
-  return `<li class="check${on?' on':''}${climb?' climber':''}">${pic(k,text)}<label for="${id}"><span>${esc(text)}</span>${sub?`<small>${esc(sub)}</small>`:''}</label><input type="checkbox" id="${id}" ${on?'checked':''}>${xlog(id,text)}</li>`;
+  return `<li class="check${on?' on':''}${climb?' climber':''}">${pic(k,text)}<label for="${id}"><span>${esc(text)}</span>${sub?`<small>${esc(sub)}</small>`:''}${on&&STATE.log[n]&&STATE.log[n].tt&&STATE.log[n].tt[id]!=null?`<small class="tt">Done at ${hm(STATE.log[n].tt[id])}</small>`:''}</label><input type="checkbox" id="${id}" ${on?'checked':''}>${xlog(id,text)}</li>`;
 }
 function moves(list){return `<ul class="moves">${list.map(([t,k])=>`<li><button type="button" class="mv" data-big="${k}">${ANIM(k,"")}<span>${esc(t)}</span></button></li>`).join('')}</ul>`}
 let canSave=null, timer=null;
@@ -460,7 +464,7 @@ function render(){
       ${planDone(d)?'<p class="foot">Full plan done today.</p>':(L.complete?'<p class="foot">Counted as complete, your way.</p>':'')}
     </div>`})()}
     ${d.noWarm||isRemoved(d.n,'d'+d.n+'-warm')?'':(()=>{const leg=d.tags.some(t=>/^Legs/.test(t));return `<div class="block"><h3>Before · ${leg?'hip mobility warm-up':'dynamic warm-up'}</h3><ul class="list">${row('d'+d.n+'-warm',leg?'Hip mobility warm-up, 6 to 7 min (Jessica Bickling)':'Dynamic warm-up, 5 to 6 min','',false,leg?'Loosens hips tight from sitting so the glutes work better. 20 to 30 s or a few reps each.':'Keep moving, no holding positions')}</ul>${moves(leg?MOB:WARM)}</div>`})()}
-    ${(()=>{const rows=d.main.map((m,i)=>row('d'+d.n+'-m'+i,m[0],m[1],m[2],m[3])).join('')+(ED(d.n).added||[]).map(a=>editing?`<li class="check edit"><span class="thumb none"></span><span class="etext">${esc(a.text)}</span><button type="button" class="ebtn" data-act="remove-added" data-id="${a.id}">Remove</button></li>`:row('d'+d.n+'-'+a.id,a.text,'',false,'Added by you')).join('');return rows?`<div class="block"><h3>Main work</h3><ul class="list">${rows}</ul></div>`:''})()}
+    ${(()=>{const rows=d.main.map((m,i)=>row('d'+d.n+'-m'+i,m[0],m[1],m[2],m[3])).join('')+(ED(d.n).added||[]).map(a=>editing?`<li class="check edit"><span class="thumb none"></span><span class="etext">${esc(a.text)}</span><button type="button" class="ebtn" data-act="remove-added" data-id="${a.id}">Remove</button></li>`:row('d'+d.n+'-'+a.id,a.text,'',false,'Added by you')).join('');return rows?`<div class="block"><h3>Main work${sessTxt(d.n)}</h3><ul class="list">${rows}</ul></div>`:''})()}
     ${d.noCool||isRemoved(d.n,'d'+d.n+'-cool')?'':`<div class="block"><h3>After · static stretching</h3><ul class="list">${row('d'+d.n+'-cool','Static stretches, 30 s each side','',false,'Mild tension, slow breathing, no bouncing')}</ul>${moves(COOL)}</div>`}
     ${d.pm&&d.pm.items.some((_,i)=>!isRemoved(d.n,'d'+d.n+'-p'+i))?`<div class="block pm"><h3>${esc(d.pm.label||'Optional second visit')} · ${esc(d.pm.time)}</h3><ul class="list">${d.pm.items.map((m,i)=>row('d'+d.n+'-p'+i,m[0],m[1],m[2],m[3])).join('')}</ul><p class="note">${d.pm.core?'Cast it from your phone and follow along on your mat. Your morning warm-up covers you, just add the stretches after if the video ends without them.':'Easy effort only. Skip it on days you feel tired; it does not count against the day.'}</p></div>`:''}
   ${d.eve&&d.eve.some((_,i)=>!isRemoved(d.n,'d'+d.n+'-e'+i))?`<div class="block pm"><h3>Evening · 19:00</h3><ul class="list">${d.eve.map((m,i)=>row('d'+d.n+'-e'+i,m[0],m[1],m[2],m[3])).join('')}</ul></div>`:''}
@@ -550,6 +554,7 @@ document.addEventListener('change',e=>{
   if(t.dataset&&t.dataset.log)return;
   if(t.type!=='checkbox')return;
   if(t.checked)STATE.done[t.id]=true;else delete STATE.done[t.id];
+  {const m=/^d(\d{1,2})-/.exec(t.id);if(m){const L=LOG(Number(m[1]));if(t.checked){const now=new Date();L.tt=L.tt||{};L.tt[t.id]=now.getHours()*60+now.getMinutes();}else if(L.tt){delete L.tt[t.id];if(!Object.keys(L.tt).length)delete L.tt;}}}
   render(); saveLocal(); push();
 });
 

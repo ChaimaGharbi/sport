@@ -85,6 +85,11 @@ export default async function handler(req, res) {
           }
           if (Object.keys(xs).length) e.x = xs;
         }
+        if (v.tt && typeof v.tt === "object" && !Array.isArray(v.tt)) {
+          const tt = {};
+          for (const [id, m] of Object.entries(v.tt).slice(0, 80)) if (/^d\d{1,2}-[a-z]+\d*$/.test(id) && Number.isInteger(m) && m >= 0 && m < 1440) tt[id] = m;
+          if (Object.keys(tt).length) e.tt = tt;
+        }
         if (v.food && typeof v.food === "object") {
           const f = {};
           for (const m of ["b", "l", "s", "d"]) if (typeof v.food[m] === "string" && v.food[m].trim()) f[m] = v.food[m].slice(0, 300);
