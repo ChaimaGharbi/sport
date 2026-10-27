@@ -225,6 +225,14 @@ const IMG = JSON.parse(document.getElementById('img').textContent || '{}');
 const ANIM = (k,alt) => { const f=IMG[k]; if(!f) return ''; const a=Array.isArray(f)?f:[f,f]; return `<span class="anim"><img src="${a[0]}" alt="${alt||''}" loading="lazy"><img class="f2" src="${a[1]}" alt="" aria-hidden="true" loading="lazy"></span>`; };
 
 const WARM = [["March with high knees, 1 min","march"],["Arm circles, 30 s each way","armc"],["Leg swings, 10 per leg","swing"],["Hip circles, 10 each way","hipc"],["Squat to calf raise, 10","squat"],["Walking lunge with twist, 8 per side","lunge"]];
+const COOL_Q = [["Standing quad stretch, foot on a step or in your hand","quad"],["Kneeling hip flexor stretch","hipf"],["Seated hamstring stretch","ham"],["Figure 4 glute stretch, lying","glute"],["Wall calf stretch","calf"],["Child's pose, to unload the lower back","child"],["Dead hang on the assisted pull-up machine, 3 x 20 to 30 s, feet on the steps",""]];
+const COOL_G = [["Figure 4 glute stretch, lying","glute"],["Seated hamstring stretch","ham"],["Kneeling hip flexor stretch","hipf"],["Standing quad stretch","quad"],["Wall calf stretch","calf"],["Child's pose","child"]];
+const COOL_U = [["Chest opener, arms wide and back, or in a doorway","chest"],["Child's pose, walk the hands to each side","child"],["Overhead triceps stretch, 30 s per arm",""],["Cross-body shoulder stretch, 30 s per arm",""],["Upper trap stretch, ear to shoulder",""]];
+const COOL_R = [["Wall calf stretch, knee straight then bent","calf"],["Standing quad stretch","quad"],["Seated hamstring stretch","ham"],["Kneeling hip flexor stretch","hipf"],["Figure 4 glute stretch, lying","glute"]];
+const RUNX = [["Wall calf stretch, knee straight then bent","calf"],["Kneeling hip flexor stretch","hipf"]];
+function coolFor(d){const t=d.tags.join(' ');const run=/Walk-run|run/i.test(t);
+  if(/Lower A/.test(t))return COOL_Q; if(/Lower B/.test(t))return COOL_G;
+  if(/Upper/.test(t))return run?[...COOL_U,...RUNX]:COOL_U; if(run)return COOL_R; return COOL;}
 const COOL = [["Standing quad stretch, foot on a step or in your hand","quad"],["Seated hamstring stretch","ham"],["Wall calf stretch","calf"],["Chest opener, arms wide and back","chest"],["Kneeling hip flexor stretch","hipf"],["Figure 4 glute stretch, lying","glute"],["Child's pose","child"]];
 
 const hard = s => " Moderate: leave 1 to 2 reps in reserve.";
@@ -311,11 +319,12 @@ const UB = [
   ["Core: forearm plank 3 x 30 to 45 s + bird dog 2 x 10 per side","plank",false,"Body in one line, squeeze the glutes."],
   CALF
 ];
+const FIN = light => ["Finisher, 10 min: "+(light?"2":"3")+" rounds of 30 s slow mountain climbers, 10 plank shoulder taps per side, 20 s bear plank hold, 1 min rest","plank",false,"Replaces Chloe Ting. At the very end, after the calves. Hands turned out 45 degrees if the wrists hurt. Low impact: no jumping."];
 const MOBI = ["Hip and ankle mobility, 10 min","hipf",false,"Hip flexor stretch, 90/90 switches, deep squat hold, calf stretch on a step."];
 const EASY = m => ["Easy bike or incline walk, "+m+" min, zone 2","",false,"About 130 to 140 bpm, you can talk in full sentences."];
 const NECK = [["Chin tucks against the wall, 2 x 10, hold 5 s","https://www.youtube.com/watch?v=gIBoxQ6AlS0",false,"Back of the head, upper back and hips against a wall. Slide the chin straight back, like making a double chin. Reverses forward head posture from the laptop."],["Wall angels, 2 x 10","https://www.youtube.com/watch?v=1UU4VvklQ44",false,"Back flat on the wall, arms in a W, slide up to a Y and back down slowly. Opens the upper back."]];
 const VAC = ["Stomach vacuum, 3 x 20 s","vacuum",false,"End of every session. Breathe out fully, pull the belly button to the spine, hold while breathing shallowly. Trains the deep muscle that holds the waist in."];
-const WALK = m => ({time:"16:00",label:"Afternoon",core:true,items:[["Walk "+m+" min, easy pace","",false,"Chloe Ting rest day in the program."]]});
+const WALK = m => ({time:"16:00",label:"Afternoon",core:true,items:[["Walk "+m+" min, easy pace","",false,"Easy pace. Helps recovery and your daily steps."]]});
 const DAYS = [
  {n:10,date:"Wed 14 Oct",kind:"Gym + home",time:"09:00",tags:["Legs: quads","Climber 12","Chloe Ting 1"],
   note:"Go one notch heavier on any move where 12 reps felt easy last week.",
@@ -339,30 +348,30 @@ const DAYS = [
   main:[TM(10,10,"5.0"),SC(12,"40","Steady."),...SB("3 x 10, heavier")],pm:HOME(8),eve:[Z2]},
  {n:20,date:"Sat 24 Oct",kind:"Gym + home",time:"10:00",tags:["Walk-run","Cardio + posture","Climber 20","Chloe Ting 9"],main:[RUN(1,2,6),SC(20,"40","Steady."),...UP("3 x 12"),CORE],pm:HOME(9,true),eve:[Z2]},
  {n:21,date:"Sun 25 Oct",kind:"Gym + home",time:"10:00",tags:["Cardio + core","Climber 20","Chloe Ting 10"],main:[TM(20,12,"5.0"),SC(20,"40","Steady."),CORE],pm:HOME(10,true),eve:[Z2]},
- {n:22,date:"Mon 26 Oct",kind:"Gym + home",time:"09:00",tags:["Lower A: quads","New split","CT rest day"],
+ {n:22,date:"Mon 26 Oct",kind:"Gym + home",time:"09:00",tags:["Lower A: quads","New split"],
   note:"New split starts today. Use the hack or pendulum squat if the gym has one, otherwise the heel-elevated goblet squat.",
   main:[TM(10,8,"5.0"),...LA(false)],pm:WALK(30),eve:[Z2]},
- {n:23,date:"Tue 27 Oct",kind:"Gym + home",time:"09:00",tags:["Upper A + core","Chloe Ting 8"],
-  main:[SC(15,"40","Steady."),...UA(false)],pm:HOME(8),eve:[Z2]},
- {n:24,date:"Wed 28 Oct",kind:"Gym + home",time:"09:00",tags:["Walk-run","Lower B: glutes","CT rest day"],
+ {n:23,date:"Tue 27 Oct",kind:"Gym + home",time:"09:00",tags:["Upper A + core"],
+  main:[SC(15,"40","Steady."),...UA(false)],pm:WALK(30),eve:[Z2]},
+ {n:24,date:"Wed 28 Oct",kind:"Gym + home",time:"09:00",tags:["Walk-run","Lower B: glutes"],
   main:[RUN(2,2,5,"Run first, then glutes."),...LB(false)],pm:WALK(30),eve:[Z2]},
- {n:25,date:"Thu 29 Oct",kind:"Gym + home",time:"09:00",tags:["Recovery","Chloe Ting 9"],
+ {n:25,date:"Thu 29 Oct",kind:"Gym + home",time:"09:00",tags:["Recovery"],
   note:"No strength today. Easy movement only.",
-  main:[EASY(30),MOBI],pm:HOME(9),eve:[Z2]},
- {n:26,date:"Fri 30 Oct",kind:"Gym + home",time:"09:00",tags:["Walk-run","Upper B","Chloe Ting 10"],
-  main:[RUN(2,2,5,"Run first, then upper body."),...UB],pm:HOME(10),eve:[Z2]},
- {n:27,date:"Sat 31 Oct",kind:"Home",time:"any",tags:["Rest day","Chloe Ting 11"],
+  main:[EASY(30),MOBI],pm:WALK(30),eve:[Z2]},
+ {n:26,date:"Fri 30 Oct",kind:"Gym + home",time:"09:00",tags:["Walk-run","Upper B","Finisher"],
+  main:[RUN(2,2,5,"Run first, then upper body."),...UB,FIN(false)],pm:WALK(30),eve:[Z2]},
+ {n:27,date:"Sat 31 Oct",kind:"Home",time:"any",tags:["Rest day"],
   note:"No legs today: Sunday run tomorrow.",
-  main:[["Walk 45 to 60 min, easy","",false,"Outside if the weather is nice."],MOBI],pm:HOME(11),eve:[Z2]},
- {n:28,date:"Sun 1 Nov",kind:"Gym + home",time:"10:00",tags:["Walk-run","Sunday run","CT rest day"],
+  main:[["Walk 45 to 60 min, easy","",false,"Outside if the weather is nice."],MOBI],eve:[Z2]},
+ {n:28,date:"Sun 1 Nov",kind:"Gym + home",time:"10:00",tags:["Walk-run","Sunday run"],
   main:[RUN(2,2,5,"Walk breaks at 5% incline. On a trail instead: same time, walk the steep downhills."),CORE],pm:WALK(30),eve:[Z2]},
- {n:29,date:"Mon 2 Nov",kind:"Gym + home",time:"09:00",tags:["Lower A: quads","Wedding week","Lighter","CT rest day"],
+ {n:29,date:"Mon 2 Nov",kind:"Gym + home",time:"09:00",tags:["Lower A: quads","Wedding week","Lighter"],
   note:"Wedding in 5 days: 2 sets each, stop 2 to 3 reps before failure, no burnout. You want to be fresh, not sore.",
   main:[TM(10,8,"5.0"),...LA(true)],pm:WALK(30),eve:[Z2]},
- {n:30,date:"Tue 3 Nov",kind:"Gym + home",time:"09:00",tags:["Walk-run","Upper A","Wedding week","Lighter","Chloe Ting 12"],
-  note:"Wednesday's easy run moved here: IELTS tomorrow. Sunday to Tuesday is 48 h, enough recovery. Run first, then a light upper body session. Chloe Ting right after you get home, before you shower. Fiber stays high until today.",
-  main:[RUN(2,2,5,"Easy and flat. Last run before Paris."),["Push-up test: max real push-ups, then max knee push-ups","pushup",false,"Do it before the upper body exercises, while you're fresh. Write both numbers in the box, even if real push-ups is 0. Good form only: hands just outside the shoulders, elbows at 45 degrees, body straight, chest to the floor."],...UA(true)],pm:HOME(12),eve:[Z2]},
- {n:31,date:"Wed 4 Nov",kind:"Rest",time:"none",tags:["IELTS","Rest day","CT rest day"],noWarm:true,noCool:true,
+ {n:30,date:"Tue 3 Nov",kind:"Gym + home",time:"09:00",tags:["Walk-run","Upper A","Wedding week","Lighter","Finisher"],
+  note:"Wednesday's easy run moved here: IELTS tomorrow. Sunday to Tuesday is 48 h, enough recovery. Run first, then a light upper body session. Short finisher at the end, no Chloe Ting. Fiber stays high until today.",
+  main:[RUN(2,2,5,"Easy and flat. Last run before Paris."),["Push-up test: max real push-ups, then max knee push-ups","pushup",false,"Do it before the upper body exercises, while you're fresh. Write both numbers in the box, even if real push-ups is 0. Good form only: hands just outside the shoulders, elbows at 45 degrees, body straight, chest to the floor."],...UA(true),FIN(true)],pm:WALK(30),eve:[Z2]},
+ {n:31,date:"Wed 4 Nov",kind:"Rest",time:"none",tags:["IELTS","Rest day"],noWarm:true,noCool:true,
   note:"IELTS at British Council Tunis: Speaking 09:00 (arrive 08:40), Listening, Reading and Writing 13:00 to 16:00 (arrive 12:15). Breakfast with protein before you leave. Eat lunch around 11:30, before you go back in: 3 hours with no food is a long time with your blood sugar. From today to the 6th: low-fiber, low-salt meals (eggs, chicken, fish, a little white rice, cooked vegetables). Keep drinking water. Moderate carbs the evening before the wedding.",
   main:[["Easy walk, if you feel like it","",false,"Optional. Between the two parts of the exam or in the evening."]]}
 ];
@@ -463,9 +472,9 @@ function render(){
       <label class="done-own"><input type="checkbox" id="complete-${d.n}" data-log="complete" ${L.complete?'checked':''}><span>Count this day as complete</span></label>
       ${planDone(d)?'<p class="foot">Full plan done today.</p>':(L.complete?'<p class="foot">Counted as complete, your way.</p>':'')}
     </div>`})()}
-    ${d.noWarm||isRemoved(d.n,'d'+d.n+'-warm')?'':(()=>{const leg=d.tags.some(t=>/^Legs/.test(t));return `<div class="block"><h3>Before · ${leg?'hip mobility warm-up':'dynamic warm-up'}</h3><ul class="list">${row('d'+d.n+'-warm',leg?'Hip mobility warm-up, 6 to 7 min (Jessica Bickling)':'Dynamic warm-up, 5 to 6 min','',false,leg?'Loosens hips tight from sitting so the glutes work better. 20 to 30 s or a few reps each.':'Keep moving, no holding positions')}</ul>${moves(leg?MOB:WARM)}</div>`})()}
+    ${d.noWarm||isRemoved(d.n,'d'+d.n+'-warm')?'':(()=>{const leg=d.tags.some(t=>/^(Legs|Lower)/.test(t));return `<div class="block"><h3>Before · ${leg?'hip mobility warm-up':'dynamic warm-up'}</h3><ul class="list">${row('d'+d.n+'-warm',leg?'Hip mobility warm-up, 6 to 7 min (Jessica Bickling)':'Dynamic warm-up, 5 to 6 min','',false,leg?'Loosens hips tight from sitting so the glutes work better. 20 to 30 s or a few reps each.':'Keep moving, no holding positions')}</ul>${moves(leg?MOB:WARM)}</div>`})()}
     ${(()=>{const rows=d.main.map((m,i)=>row('d'+d.n+'-m'+i,m[0],m[1],m[2],m[3])).join('')+(ED(d.n).added||[]).map(a=>editing?`<li class="check edit"><span class="thumb none"></span><span class="etext">${esc(a.text)}</span><button type="button" class="ebtn" data-act="remove-added" data-id="${a.id}">Remove</button></li>`:row('d'+d.n+'-'+a.id,a.text,'',false,'Added by you')).join('');return rows?`<div class="block"><h3>Main work${sessTxt(d.n)}</h3><ul class="list">${rows}</ul></div>`:''})()}
-    ${d.noCool||isRemoved(d.n,'d'+d.n+'-cool')?'':`<div class="block"><h3>After · static stretching</h3><ul class="list">${row('d'+d.n+'-cool','Static stretches, 30 s each side','',false,'Mild tension, slow breathing, no bouncing')}</ul>${moves(COOL)}</div>`}
+    ${d.noCool||isRemoved(d.n,'d'+d.n+'-cool')?'':`<div class="block"><h3>After · static stretching</h3><ul class="list">${row('d'+d.n+'-cool','Static stretches, 30 s each side','',false,'Picked for what you trained today. Mild tension, slow breathing, no bouncing')}</ul>${moves(coolFor(d))}</div>`}
     ${d.pm&&d.pm.items.some((_,i)=>!isRemoved(d.n,'d'+d.n+'-p'+i))?`<div class="block pm"><h3>${esc(d.pm.label||'Optional second visit')} · ${esc(d.pm.time)}</h3><ul class="list">${d.pm.items.map((m,i)=>row('d'+d.n+'-p'+i,m[0],m[1],m[2],m[3])).join('')}</ul><p class="note">${d.pm.core?'Cast it from your phone and follow along on your mat. Your morning warm-up covers you, just add the stretches after if the video ends without them.':'Easy effort only. Skip it on days you feel tired; it does not count against the day.'}</p></div>`:''}
   ${d.eve&&d.eve.some((_,i)=>!isRemoved(d.n,'d'+d.n+'-e'+i))?`<div class="block pm"><h3>Evening · 19:00</h3><ul class="list">${d.eve.map((m,i)=>row('d'+d.n+'-e'+i,m[0],m[1],m[2],m[3])).join('')}</ul></div>`:''}
   </section>
