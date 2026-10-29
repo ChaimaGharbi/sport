@@ -269,7 +269,7 @@ const SC = (min, spm, how) => ["Stair climber "+min+" min, "+spm+" steps/min", "
 
 const CT = n => ["Chloe Ting 2024 Weight Loss Challenge, workout "+n, "", false, "Do it right after you get home from the gym, before you shower: one sweat, one shower. Skip the warm-up video after a gym morning. Low-impact versions on strength days. Wrists first: 1 min of wrist circles and rocking on all fours. If wrists hurt, turn the hands out about 45°, or do planks on forearms and push-ups on fists. Reverse plank: knees bent (reverse tabletop) until it gets easier."];
 const HOME = (n,hip) => ({time:"16:00",label:"Chloe Ting at home",core:true,items:hip?[CT(n),...HIP]:[CT(n)]});
-const Z2 = ["Zone 2 bike, 60 min","",false,"Around 19:00, before dinner. You can talk in full sentences, about 120 to 140 bpm. Finish 90 min before bed."];
+const Z2 = ["Zone 2 bike, 30 to 45 min","",false,"3 to 4 evenings a week, not on leg days. Easy: you can talk in full sentences, about 120 to 140 bpm. Or split it: 5 min on the bike in each pomodoro break adds up. Finish 90 min before bed. About 200 to 300 kcal."];
 const OFFSET = 9; const disp = n => n - OFFSET;
 const CORE = ["Core: dead bug 2 x 10 per side","deadbug",false,"Deep core for a flatter stomach."];
 const RUN = (r,w,x,extra) => ["Walk-run: "+r+" min jog / "+w+" min walk x "+x,"treadmill",false,"5 min walk first and last. Jog at 6 to 6.5 km/h (9:15 to 10:00 min/km), incline 1%, heart rate under 160 to 165. You should be able to talk."+(extra?" "+extra:"")+" Stop if a shin, knee or foot hurts sharply."];
@@ -367,7 +367,7 @@ const DAYS = [
   main:[RUN(2,2,5,"Walk breaks at 5% incline. On a trail instead: same time, walk the steep downhills."),CORE],pm:WALK(30),eve:[Z2]},
  {n:29,date:"Mon 2 Nov",kind:"Gym + home",time:"09:00",tags:["Lower A: quads","Wedding week","Lighter"],
   note:"Wedding in 5 days: 2 sets each, stop 2 to 3 reps before failure, no burnout. You want to be fresh, not sore.",
-  main:[TM(10,8,"5.0"),...LA(true)],pm:WALK(30),eve:[Z2]},
+  main:[TM(10,8,"5.0"),...LA(true)],pm:WALK(30)},
  {n:30,date:"Tue 3 Nov",kind:"Gym + home",time:"09:00",tags:["Walk-run","Upper A","Wedding week","Lighter","Finisher"],
   note:"Wednesday's easy run moved here: IELTS tomorrow. Sunday to Tuesday is 48 h, enough recovery. Run first, then a light upper body session. Short finisher at the end, no Chloe Ting. Fiber stays high until today.",
   main:[RUN(2,2,5,"Easy and flat. Last run before Paris."),["Push-up test: max real push-ups, then max knee push-ups","pushup",false,"Do it before the upper body exercises, while you're fresh. Write both numbers in the box, even if real push-ups is 0. Good form only: hands just outside the shoulders, elbows at 45 degrees, body straight, chest to the floor."],...UA(true),FIN(true)],pm:WALK(30),eve:[Z2]},
