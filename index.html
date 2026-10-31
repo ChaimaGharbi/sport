@@ -294,17 +294,21 @@ const LB = light => [
   ["Standing cable leg curl, ankle strap, "+(light?"2 x 12 per leg":"3 x 12 per leg"),"https://www.youtube.com/watch?v=0U8Tj2WmSy4",false,"Low pulley, ankle strap, face the machine and hold it. Knees side by side, curl the heel toward your butt, lower in 3 s. Hamstrings balance all the quad work and protect the knees. If the gym has a lying leg curl machine, that works too."],
   ["Cable kickback, 2 x 12 per leg","kick",false,"Small range, squeeze at the back. No abduction machine, no clamshells: the side glute above your dip is already developed."]
 ];
+const PUSHB = light => [
+  ["Push-up goal: push-ups with a hip band around the arms, "+(light?"2 sets":"3 sets")+" of as many clean reps as you can","https://www.youtube.com/watch?v=RWFCLyyyqV8",false,"Fabric loop band just above the elbows, push your arms out against it the whole time. Hands just outside the shoulders, elbows at 45 degrees, body straight, chest to the floor. Stop 1 to 2 reps before your form breaks. Write the reps in the box, e.g. 6/5/4."],
+  ["Push-up goal: negatives without the band, 2 x 3","pushup",false,"Builds the strength to do them without help. Start at the top, lower in 4 seconds, knees down, push back up."]
+];
 const PUSH = light => [
   ["Push-up goal: incline push-ups, "+(light?"2 x 10":"3 x 8 to 12"),"https://www.youtube.com/watch?v=r7JUJg82l4Q",false,"Hands on a bench or the Smith machine bar at hip height, just outside shoulder width, at chest level. Elbows back at about 45 degrees: an arrow from above, not a T. Body in one straight line, chest to the bar. When 3 x 12 feels easy, go one step lower (knee height, then a step). Write the height and reps in the box."],
   ["Push-up goal: negatives from the toes, "+(light?"2 x 3":"3 x 3"),"pushup",false,"Same arrow position: hands just outside the shoulders, elbows back at 45 degrees. Start at the top of a real push-up, lower yourself in 4 seconds, chest to the floor. Drop the knees and push back up. Builds strength in exactly the part you can't do yet."]
 ];
-const UA = light => [
+const UA = (light,band) => [
   ["Posture: face pull, "+(light?"2 x 15":"3 x 15")+", light","facepull",false,"Pulley at eye level, rope or wide neutral-grip bar. Shoulders down, pull to the eyes, elbows high."],
   ["Posture: reverse pec deck, 2 x 15","revfly",false,"Handles at shoulder height, arms almost straight, open until in line with the body. Shoulders down."],
   ["Chest-supported row, elbows wide, "+(light?"2 x 12":"3 x 12"),"csrow",false,"Chest on an incline bench, light dumbbells, pull with elbows out to the sides. Mid-back definition without lat width."],
   ["Posture: prone Y-raise, 2 x 12, 1 to 2 kg or no weight","https://www.youtube.com/watch?v=U7Pdw5wFGh0",false,"Face down on an incline bench, thumbs up, raise the arms in a Y. Lower traps."],
   ["Incline dumbbell press, "+(light?"2 x 10":"3 x 10 to 12"),"incpress",false,"Bench at about 30 degrees. Builds the upper chest under the breasts for a lifted, fuller look. Moderate weight."],
-  ...PUSH(light),
+  ...(band?PUSHB(light):PUSH(light)),
   ["Arms: rope triceps pushdown, "+(light?"2 x 12":"3 x 12 to 15"),"tripush",false,"Elbows glued to the ribs, stop at chest height on the way up, spread the rope and straighten fully at the bottom."],
   ["Arms: incline dumbbell curl, "+(light?"2 x 12":"3 x 12"),"inccurl",false,"Arms hang behind you, no swinging. Toned arms come from this plus fat loss."],
   ["Core: dead bug 3 x 10 per side","deadbug",false,"Lower back pressed into the floor."],
@@ -371,7 +375,7 @@ const DAYS = [
   main:[TM(10,8,"5.0"),...LA(true)],pm:WALK(30)},
  {n:30,date:"Tue 3 Nov",kind:"Gym + home",time:"09:00",tags:["Walk-run","Upper A","Wedding week","Lighter","Finisher"],
   note:"Wednesday's easy run moved here: IELTS tomorrow. Sunday to Tuesday is 48 h, enough recovery. Run first, then a light upper body session. Short finisher at the end, no Chloe Ting. Fiber stays high until today.",
-  main:[RUN(2,2,5,"Easy and flat. Last run before Paris."),["Push-up test: max real push-ups, then max knee push-ups","pushup",false,"Do it before the upper body exercises, while you're fresh. Write both numbers in the box, even if real push-ups is 0. Good form only: hands just outside the shoulders, elbows at 45 degrees, body straight, chest to the floor."],...UA(true),FIN(true)],pm:WALK(30),eve:[Z2]},
+  main:[RUN(2,2,5,"Easy and flat. Last run before Paris."),["Push-up test: max real push-ups without the band, then max with the hip band","pushup",false,"Do it before the upper body exercises, while you're fresh. Write both numbers in the box, even if without the band is 0. Good form only: hands just outside the shoulders, elbows at 45 degrees, body straight, chest to the floor. Skip the band push-ups later in the session."],...UA(true,true),FIN(true)],pm:WALK(30),eve:[Z2]},
  {n:31,date:"Wed 4 Nov",kind:"Rest",time:"none",tags:["IELTS","Rest day"],noWarm:true,noCool:true,
   note:"IELTS at British Council Tunis: Speaking 09:00 (arrive 08:40), Listening, Reading and Writing 13:00 to 16:00 (arrive 12:15). Breakfast with protein before you leave. Eat lunch around 11:30, before you go back in: 3 hours with no food is a long time with your blood sugar. From today to the 6th: low-fiber, low-salt meals (eggs, chicken, fish, a little white rice, cooked vegetables). Keep drinking water. Moderate carbs the evening before the wedding.",
   main:[["Easy walk, if you feel like it","",false,"Optional. Between the two parts of the exam or in the evening."]]}
