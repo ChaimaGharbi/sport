@@ -324,6 +324,23 @@ const UB = [
   CALF
 ];
 const FIN = light => ["Finisher, 10 min: "+(light?"2":"3")+" rounds of 30 s slow mountain climbers, 10 plank shoulder taps per side, 20 s bear plank hold, 1 min rest","plank",false,"Replaces Chloe Ting. At the very end, after the calves. Hands turned out 45 degrees if the wrists hurt. Low impact: no jumping."];
+const LB2 = () => [
+  ["Hip thrust, 4 x 8 to 10","hipthrust",false,"Main glute builder. Chin tucked, pause 1 s at the top."],
+  ["Romanian deadlift with dumbbells, 3 x 10","rdl",false,"Hips back, slight knee bend, back flat. Stop if the lower back takes over."],
+  ["Bulgarian split squat, bodyweight, 2 x 8 per leg","split",false,"Hold something for balance, slight forward lean. Add sets before adding weight."],
+  ["Standing cable leg curl, ankle strap, 3 x 12 per leg","https://www.youtube.com/watch?v=0U8Tj2WmSy4",false,"Face the machine, knees side by side, lower in 3 s."],
+  ["Cable kickback, 2 x 12 per leg","kick",false,"Small range, squeeze at the back."],
+  ["45 degree back extension, no weight, 2 x 12, only if your lower back has been pain-free for a week","backext",false,"Pad just below the hip bones, round the upper back, stop when the body is straight. Otherwise skip it."]
+];
+const UB2 = [
+  ["Arms: overhead cable triceps extension, 3 x 12","ohtri",false,"Rope on the low pulley, face away, elbows next to the head."],
+  ["Arms: hammer curl, 3 x 12","hammer",false,"Palms facing each other, elbows still."],
+  ...PUSHB(false),
+  ["Posture: face pull, 2 x 15, light","facepull",false,"Shoulders down, pull to the eyes."],
+  ["Core: forearm plank 3 x 30 to 45 s + bird dog 2 x 10 per side","plank",false,"Body in one line, squeeze the glutes."],
+  CALF
+];
+const SIDEP = ["Side plank on the forearm, 3 x 20 to 30 s per side","plank",false,"Knees bent if needed. Strong core without thicker obliques."];
 const MOBI = ["Hip and ankle mobility, 10 min","hipf",false,"Hip flexor stretch, 90/90 switches, deep squat hold, calf stretch on a step."];
 const EASY = m => ["Easy bike or incline walk, "+m+" min, zone 2","",false,"About 130 to 140 bpm, you can talk in full sentences."];
 const NECK = [["Chin tucks against the wall, 2 x 10, hold 5 s","https://www.youtube.com/watch?v=gIBoxQ6AlS0",false,"Back of the head, upper back and hips against a wall. Slide the chin straight back, like making a double chin. Reverses forward head posture from the laptop."],["Wall angels, 2 x 10","https://www.youtube.com/watch?v=1UU4VvklQ44",false,"Back flat on the wall, arms in a W, slide up to a Y and back down slowly. Opens the upper back."]];
@@ -380,7 +397,36 @@ const DAYS = [
   note:"IELTS at British Council Tunis: Speaking 09:00 (arrive 08:40), Listening, Reading and Writing 13:00 to 16:00 (arrive 12:15). Breakfast with protein before you leave. Eat lunch around 11:30, before you go back in: 3 hours with no food is a long time with your blood sugar. From today to the 6th: low-fiber, low-salt meals (eggs, chicken, fish, a little white rice, cooked vegetables). Keep drinking water. Moderate carbs the evening before the wedding.",
   main:[["Easy walk, if you feel like it","",false,"Optional. Between the two parts of the exam or in the evening."]]}
 ];
-DAYS.forEach(d=>{ if(d.main) d.main.push(...NECK, VAC, TRAP); });
+
+DAYS.push(
+ {n:32,date:"Thu 5 Nov",kind:"Rest",time:"none",tags:["Travel","Paris"],noWarm:true,noCool:true,noExtras:true,note:"Flight to Paris. Weigh yourself this morning before you leave. Low-fiber, low-salt meals, keep drinking water.",main:[["Walk around when you arrive, easy","",false,"Moving after a flight helps against bloating."]]},
+ {n:33,date:"Fri 6 Nov",kind:"Rest",time:"none",tags:["Paris","Day before the wedding"],noWarm:true,noCool:true,noExtras:true,note:"Low-fiber, low-salt meals. Moderate carbs this evening (a little rice or pasta). No fizzy drinks or chewing gum.",main:[["Walk in Paris, 30 to 60 min","",false,"Optional: 10 min mobility at the hotel."],MOBI]},
+ {n:34,date:"Sat 7 Nov",kind:"Rest",time:"none",tags:["Wedding day"],noWarm:true,noCool:true,noExtras:true,note:"Omelette at the brunch (plus a slice of bread), water through the afternoon, a real dinner before drinking, a glass of water between drinks, something with carbs before bed. Enjoy it.",main:[["Enjoy your brother's wedding","",false,"Dancing counts as training today."]]},
+ {n:35,date:"Sun 8 Nov",kind:"Rest",time:"none",tags:["Paris","Break week starts"],noWarm:true,noCool:true,noExtras:true,note:"Break week from today to Sat 14 Nov: about 1900 to 2100 kcal, mostly extra carbs. The scale will go up 1 to 1.5 kg of water: expected, not fat. Don't judge your weight until about 17 Nov.",main:[["Walk around Paris, easy","",false,"Water and an easy walk help the morning after."]]},
+ {n:36,date:"Mon 9 Nov",kind:"Rest",time:"none",tags:["Travel","Break week"],noWarm:true,noCool:true,noExtras:true,note:"Flight back. Break week continues: about 1900 to 2100 kcal.",main:[["Walk when you're home, 15 to 20 min","",false,""]]},
+ {n:37,date:"Tue 10 Nov",kind:"Gym + home",time:"09:00",tags:["Upper A + core", "Finisher", "Break week", "Lighter, first day back"],note:"Break week: about 1900 to 2100 kcal, mostly extra carbs.",main:[SC(15,"40","Steady."),...UA(true,true),FIN(true)],pm:WALK(30),eve:[Z2]},
+ {n:38,date:"Wed 11 Nov",kind:"Gym + home",time:"09:00",tags:["Walk-run", "Core", "Break week"],note:"Break week: about 1900 to 2100 kcal, mostly extra carbs. First week back: 3 min jog / 1.5 min walk.",main:[RUN(3,1.5,5,"Walk breaks at 3 to 5% incline."),CORE,SIDEP],pm:WALK(30)},
+ {n:39,date:"Thu 12 Nov",kind:"Gym + home",time:"09:00",tags:["Lower B: glutes", "Break week"],note:"Break week: about 1900 to 2100 kcal, mostly extra carbs. Glute day moved to Thursday, so it is no longer on the same day as a run.",main:[TM(10,8,"5.0"),...LB2()],pm:WALK(30)},
+ {n:40,date:"Fri 13 Nov",kind:"Gym + home",time:"09:00",tags:["Walk-run", "Upper B", "Finisher", "Break week"],note:"Break week: about 1900 to 2100 kcal, mostly extra carbs.",main:[RUN(3,1.5,5,"Run first, then upper body. Legs may be tired from Thursday: keep the jog easy."),...UB2,FIN(false)],pm:WALK(30),eve:[Z2]},
+ {n:41,date:"Sat 14 Nov",kind:"Home",time:"any",tags:["Rest day", "Break week"],note:"Break week: about 1900 to 2100 kcal, mostly extra carbs.",main:[["Walk 45 to 60 min, easy","",false,"Outside if the weather is nice."],MOBI],eve:[Z2]},
+ {n:42,date:"Sun 15 Nov",kind:"Gym + home",time:"10:00",tags:["Walk-run", "Sunday run"],note:"Block 2 starts today: back to 1400 kcal, 1500 on bike days.",main:[RUN(3,1.5,5,"Longest run of the week. Walk breaks at 5% incline, or on a trail by time: walk the steep hills."),CORE],pm:WALK(30)},
+ {n:43,date:"Mon 16 Nov",kind:"Gym + home",time:"09:00",tags:["Lower A: quads"],main:[TM(10,8,"5.0"),...LA(false)],pm:WALK(30)},
+ {n:44,date:"Tue 17 Nov",kind:"Gym + home",time:"09:00",tags:["Upper A + core", "Finisher"],main:[SC(15,"40","Steady."),...UA(false,true),FIN(false)],pm:WALK(30),eve:[Z2]},
+ {n:45,date:"Wed 18 Nov",kind:"Gym + home",time:"09:00",tags:["Walk-run", "Core"],main:[RUN(5,1.5,4,"Walk breaks at 3 to 5% incline."),CORE,SIDEP],pm:WALK(30)},
+ {n:46,date:"Thu 19 Nov",kind:"Gym + home",time:"09:00",tags:["Lower B: glutes"],main:[TM(10,8,"5.0"),...LB2()],pm:WALK(30)},
+ {n:47,date:"Fri 20 Nov",kind:"Gym + home",time:"09:00",tags:["Walk-run", "Upper B", "Finisher"],main:[RUN(5,1.5,4,"Run first, then upper body. Legs may be tired from Thursday: keep the jog easy."),...UB2,FIN(false)],pm:WALK(30),eve:[Z2]},
+ {n:48,date:"Sat 21 Nov",kind:"Home",time:"any",tags:["Rest day"],main:[["Walk 45 to 60 min, easy","",false,"Outside if the weather is nice."],MOBI],eve:[Z2]},
+ {n:49,date:"Sun 22 Nov",kind:"Gym + home",time:"10:00",tags:["Walk-run", "Sunday run"],main:[RUN(5,1.5,4,"Longest run of the week. Walk breaks at 5% incline, or on a trail by time: walk the steep hills."),CORE],pm:WALK(30)},
+ {n:50,date:"Mon 23 Nov",kind:"Gym + home",time:"09:00",tags:["Lower A: quads"],main:[TM(10,8,"5.0"),...LA(false)],pm:WALK(30)},
+ {n:51,date:"Tue 24 Nov",kind:"Gym + home",time:"09:00",tags:["Upper A + core", "Finisher"],main:[SC(15,"40","Steady."),...UA(false,true),FIN(false)],pm:WALK(30),eve:[Z2]},
+ {n:52,date:"Wed 25 Nov",kind:"Gym + home",time:"09:00",tags:["Walk-run", "Core"],main:[RUN(8,1.5,3,"Walk breaks at 3 to 5% incline."),CORE,SIDEP],pm:WALK(30)},
+ {n:53,date:"Thu 26 Nov",kind:"Gym + home",time:"09:00",tags:["Lower B: glutes"],main:[TM(10,8,"5.0"),...LB2()],pm:WALK(30)},
+ {n:54,date:"Fri 27 Nov",kind:"Gym + home",time:"09:00",tags:["Walk-run", "Upper B", "Finisher"],main:[RUN(8,1.5,3,"Run first, then upper body. Legs may be tired from Thursday: keep the jog easy."),...UB2,FIN(false)],pm:WALK(30),eve:[Z2]},
+ {n:55,date:"Sat 28 Nov",kind:"Home",time:"any",tags:["Rest day"],main:[["Walk 45 to 60 min, easy","",false,"Outside if the weather is nice."],MOBI],eve:[Z2]},
+ {n:56,date:"Sun 29 Nov",kind:"Gym + home",time:"10:00",tags:["Walk-run", "Sunday run"],main:[RUN(8,1.5,3,"Longest run of the week. Walk breaks at 5% incline, or on a trail by time: walk the steep hills."),CORE],pm:WALK(30)},
+ {n:57,date:"Mon 30 Nov",kind:"Gym + home",time:"09:00",tags:["Lower A: quads"],main:[TM(10,8,"5.0"),...LA(false)],pm:WALK(30)}
+);
+DAYS.forEach(d=>{ if(d.main&&!d.noExtras) d.main.push(...NECK, VAC, TRAP); });
 
 const KEY='reboot15-day';
 function ls(get,v){try{return get?localStorage.getItem(KEY):localStorage.setItem(KEY,v)}catch(e){return null}}
@@ -443,7 +489,7 @@ function render(){
   const d=DAYS.find(x=>x.n===sel);
   const html=`<div class="wrap">
   <header style="display:grid;gap:10px">
-    <div class="eyebrow">California Gym JDM · 14 Oct to 4 Nov 2026</div>
+    <div class="eyebrow">California Gym JDM · 14 Oct to 30 Nov 2026</div>
     <h1>Ascent</h1>
     <p class="lede">Your daily climb.</p>
     <div class="meter"><div class="bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><b>${daysDone}/${DAYS.length} days</b>${(()=>{const t=new Date(2026,10,7)-new Date(new Date().toDateString());const n=Math.round(t/864e5);return n>0?`<span class="tag time">Wedding in ${n} days</span>`:""})()}<span class="save" id="save">${esc(SYNC.status)}</span></div>
